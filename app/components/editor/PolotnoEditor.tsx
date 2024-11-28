@@ -1,42 +1,37 @@
-"use client";
-
-import { useEffect, useRef } from 'react';
-import { createStore } from '@polotno/core';
-import { Workspace } from '@polotno/workspace';
+import React from 'react';
 import { PolotnoContainer, SidePanelWrap, WorkspaceWrap } from 'polotno';
-import { DEFAULT_SECTIONS } from '@polotno/side-panel';
-import { Toolbar } from '@polotno/toolbar/toolbar';
-import { ZoomButtons } from '@polotno/toolbar/zoom-buttons';
+import { Toolbar } from 'polotno/toolbar/toolbar';
+import { PagesTimeline } from 'polotno/pages-timeline';
+import { ZoomButtons } from 'polotno/toolbar/zoom-buttons';
+import { SidePanel } from 'polotno/side-panel';
+import { Workspace } from 'polotno/canvas/workspace';
+
 import '@blueprintjs/core/lib/css/blueprint.css';
-import '@blueprintjs/popover2/lib/css/blueprint-popover2.css';
 
-const PolotnoEditor = () => {
-  const store = useRef(createStore({
-    key: process.env.NEXT_PUBLIC_POLOTNO_API_KEY || 'nFA5H9elEytDyPyvKL7T',
-    showCredit: true
-  }));
+import { createStore } from 'polotno/model/store';
 
-  useEffect(() => {
-    // Create a default page if none exists
-    if (store.current.pages.length === 0) {
-      store.current.addPage();
-    }
-  }, []);
+const store = createStore({
+  key: 'nFA5H9elEytDyPyvKL7T', // you can create it here: https://polotno.com/cabinet/
+  // you can hide back-link on a paid license
+  // but it will be good if you can keep it for Polotno project support
+  showCredit: true,
+});
+const page = store.addPage();
 
+export const Editor = () => {
   return (
-    <div style={{ width: '100vw', height: '100vh' }}>
-      <PolotnoContainer>
-        <SidePanelWrap>
-          <DEFAULT_SECTIONS store={store.current} />
-        </SidePanelWrap>
-        <WorkspaceWrap>
-          <Toolbar store={store.current} downloadButtonEnabled />
-          <Workspace store={store.current} />
-          <ZoomButtons store={store.current} />
-        </WorkspaceWrap>
-      </PolotnoContainer>
-    </div>
+    <PolotnoContainer style={{ width: '100vw', height: '100vh' }}>
+      <SidePanelWrap>
+        <SidePanel store={store} />
+      </SidePanelWrap>
+      <WorkspaceWrap>
+        <Toolbar store={store} downloadButtonEnabled />
+        <Workspace store={store} />
+        <ZoomButtons store={store} />
+        <PagesTimeline store={store} />
+      </WorkspaceWrap>
+    </PolotnoContainer>
   );
 };
 
-export default PolotnoEditor;
+export default Editor;
