@@ -7,11 +7,13 @@ import { PagesTimeline } from 'polotno/pages-timeline';
 import { ZoomButtons } from 'polotno/toolbar/zoom-buttons';
 import { SidePanel } from 'polotno/side-panel';
 import { Workspace } from 'polotno/canvas/workspace';
+import { createStore } from 'polotno/model/store';
+import { DEFAULT_SECTIONS } from 'polotno/side-panel';
+import { CustomPalleteSection } from 'app/components/editor/CustomPalleteSection';
+
 
 import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/popover2/lib/css/blueprint-popover2.css';
-
-import { createStore } from 'polotno/model/store';
 
 const PolotnoEditor = () => {
   const store = useRef(createStore({
@@ -25,11 +27,16 @@ const PolotnoEditor = () => {
     }
   }, []);
 
+  const sections = [
+    CustomPalleteSection,
+    ...DEFAULT_SECTIONS
+  ];
+
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
       <PolotnoContainer>
         <SidePanelWrap>
-          <SidePanel store={store.current} />
+          <SidePanel store={store.current} sections={sections} />
         </SidePanelWrap>
         <WorkspaceWrap>
           <Toolbar store={store.current} downloadButtonEnabled />

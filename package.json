@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@blueprintjs/core": "^5.9.1",
+    "@blueprintjs/core": "^5.16.0",
     "@blueprintjs/popover2": "^2.0.2",
     "@hookform/resolvers": "^3.9.0",
     "@next/swc-wasm-nodejs": "13.5.1",
@@ -53,6 +53,7 @@
     "eslint-config-next": "13.5.1",
     "input-otp": "^1.2.4",
     "lucide-react": "^0.446.0",
+    "mobx-react-lite": "^4.0.7",
     "next": "13.5.1",
     "next-themes": "^0.3.0",
     "polotno": "^2.15.0",
