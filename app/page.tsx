@@ -1,9 +1,8 @@
 import dynamic from 'next/dynamic';
 
-const PolotnoEditor = dynamic(
-  () => import('./components/editor/PolotnoEditor'),
-  { ssr: false }
-);
+const PolotnoEditor = dynamic(() => import('./components/editor/PolotnoEditor'), {
+  ssr: false
+});
 
 export default function Home() {
   return (
