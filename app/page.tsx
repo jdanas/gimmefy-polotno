@@ -1,7 +1,12 @@
+// page.tsx
+'use client';  // Add this line
+
 import dynamic from 'next/dynamic';
+import { useState } from 'react';
 
 const PolotnoEditor = dynamic(() => import('./components/editor/PolotnoEditor'), {
-  ssr: false
+  ssr: false,
+  loading: () => <div>Loading editor...</div>
 });
 
 export default function Home() {

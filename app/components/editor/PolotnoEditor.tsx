@@ -9,8 +9,8 @@ import { SidePanel } from 'polotno/side-panel';
 import { Workspace } from 'polotno/canvas/workspace';
 import { createStore } from 'polotno/model/store';
 import { DEFAULT_SECTIONS } from 'polotno/side-panel';
-import { CustomPalleteSection } from 'app/components/editor/CustomPalleteSection';
-
+import { CustomPalleteSection } from './CustomPalleteSection';
+import { CustomHelloSection } from './CustomHelloSection';
 
 import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/popover2/lib/css/blueprint-popover2.css';
@@ -28,6 +28,7 @@ const PolotnoEditor = () => {
   }, []);
 
   const sections = [
+    CustomHelloSection,
     CustomPalleteSection,
     ...DEFAULT_SECTIONS
   ];
