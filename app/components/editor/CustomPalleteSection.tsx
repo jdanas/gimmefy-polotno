@@ -36,6 +36,7 @@ export const CustomPalleteSection = {
   )),
   Panel: observer(({ store }: CustomPalleteSectionProps) => {
     const [palettes, setPalettes] = useState<Palette[]>(defaultPalettes);
+    const [selectedElement, setSelectedElement] = useState<'all' | 'background' | 'text' | 'shapes'>('all');
 
     const handlePaletteUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
@@ -54,18 +55,61 @@ export const CustomPalleteSection = {
       reader.readAsText(file);
     };
 
-    const handleColorClick = (color: string) => {
-      const selectedElements = store.selectedElements;
-      if (selectedElements.length > 0) {
-        selectedElements.forEach(element => {
-          element.set({ fill: color });
-        });
+    const applyColorToTemplate = (color: string) => {
+      const page = store.activePage;
+      if (!page) return;
+
+      switch (selectedElement) {
+        case 'all':
+          // Apply to all elements
+          page.children.forEach(element => {
+            element.set({ fill: color });
+          });
+          break;
+        case 'background':
+          // Apply to background elements
+          page.children
+            .filter(element => element.type === 'background')
+            .forEach(element => element.set({ fill: color }));
+          break;
+        case 'text':
+          // Apply to text elements
+          page.children
+            .filter(element => element.type === 'text')
+            .forEach(element => element.set({ fill: color }));
+          break;
+        case 'shapes':
+          // Apply to shape elements
+          page.children
+            .filter(element => ['rect', 'circle', 'polygon'].includes(element.type))
+            .forEach(element => element.set({ fill: color }));
+          break;
       }
     };
 
     return (
       <div style={{ padding: '20px' }}>
         <div style={{ marginBottom: '20px' }}>
+          <h3 style={{ marginBottom: '10px' }}>Apply Colors To:</h3>
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+            {['all', 'background', 'text', 'shapes'].map((type) => (
+              <button
+                key={type}
+                onClick={() => setSelectedElement(type as typeof selectedElement)}
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: selectedElement === type ? '#007bff' : '#f0f0f0',
+                  color: selectedElement === type ? 'white' : 'black',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}
+              >
+                {type.charAt(0).toUpperCase() + type.slice(1)}
+              </button>
+            ))}
+          </div>
+          
           <h3 style={{ marginBottom: '10px' }}>Upload New Palette</h3>
           <input
             type="file"
@@ -79,9 +123,6 @@ export const CustomPalleteSection = {
               borderRadius: '4px'
             }}
           />
-          <p style={{ fontSize: '12px', color: '#666' }}>
-            Upload a JSON file with format: {"{"} "name": "Palette Name", "colors": ["#hex", ...] {"}"}
-          </p>
         </div>
 
         <div style={{ 
@@ -114,8 +155,8 @@ export const CustomPalleteSection = {
                 {palette.colors.map((color, colorIndex) => (
                   <div
                     key={colorIndex}
-                    onClick={() => handleColorClick(color)}
-                    title={color}
+                    onClick={() => applyColorToTemplate(color)}
+                    title={`Apply ${color} to ${selectedElement}`}
                     style={{
                       width: '30px',
                       height: '30px',
@@ -138,5 +179,3 @@ export const CustomPalleteSection = {
     );
   })
 };
-
-export default CustomPalleteSection;
