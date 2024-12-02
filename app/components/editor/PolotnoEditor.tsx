@@ -29,7 +29,6 @@ const PolotnoEditor = () => {
 
   const sections = [
     CustomSection,
-    CustomPalleteSection,
     ...DEFAULT_SECTIONS
   ];
 

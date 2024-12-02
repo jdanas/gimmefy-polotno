@@ -16,21 +16,26 @@ interface Palette {
   colors: string[];
 }
 
-// Default palette for initial state
-const defaultPalette: Palette = {
-  name: "Default Colors",
-  colors: ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF"]
-};
+const defaultPalettes: Palette[] = [
+  {
+    name: "Default Colors",
+    colors: ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#FF00FF"]
+  },
+  {
+    name: "Pastel Colors",
+    colors: ["#FFB3BA", "#BAFFC9", "#BAE1FF", "#FFFFBA", "#FFB3F7"]
+  }
+];
 
 export const CustomPalleteSection = {
   name: 'custom-palette',
-  Tab: (props) => (
-    <SectionTab name="custom-palette" {...props}>
+  Tab: observer(({ store }) => (
+    <SectionTab name="custom-palette" title="Color Palette">
       <Icon icon="tint" />
     </SectionTab>
-  ),
+  )),
   Panel: observer(({ store }: CustomPalleteSectionProps) => {
-    const [palettes, setPalettes] = useState<Palette[]>([defaultPalette]);
+    const [palettes, setPalettes] = useState<Palette[]>(defaultPalettes);
 
     const handlePaletteUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
@@ -59,35 +64,69 @@ export const CustomPalleteSection = {
     };
 
     return (
-      <SectionContent name="custom-palette">
-        <div style={{ padding: '20px' }}>
+      <div style={{ padding: '20px' }}>
+        <div style={{ marginBottom: '20px' }}>
+          <h3 style={{ marginBottom: '10px' }}>Upload New Palette</h3>
           <input
             type="file"
             accept=".json"
             onChange={handlePaletteUpload}
             style={{
-              marginBottom: '20px',
+              marginBottom: '10px',
               width: '100%',
-              padding: '10px',
-              border: '1px solid #ccc',
+              padding: '8px',
+              border: '1px solid #ddd',
               borderRadius: '4px'
             }}
           />
+          <p style={{ fontSize: '12px', color: '#666' }}>
+            Upload a JSON file with format: {"{"} "name": "Palette Name", "colors": ["#hex", ...] {"}"}
+          </p>
+        </div>
+
+        <div style={{ 
+          maxHeight: '400px',
+          overflowY: 'auto',
+          paddingRight: '10px'
+        }}>
           {palettes.map((palette, paletteIndex) => (
-            <div key={paletteIndex} style={{ marginBottom: '20px' }}>
-              <h3>{palette.name}</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px' }}>
+            <div 
+              key={paletteIndex} 
+              style={{ 
+                marginBottom: '20px',
+                padding: '15px',
+                backgroundColor: '#f5f5f5',
+                borderRadius: '8px'
+              }}
+            >
+              <h3 style={{ 
+                marginBottom: '10px',
+                fontSize: '16px',
+                fontWeight: 'bold'
+              }}>
+                {palette.name}
+              </h3>
+              <div style={{ 
+                display: 'grid',
+                gridTemplateColumns: 'repeat(5, 1fr)',
+                gap: '8px'
+              }}>
                 {palette.colors.map((color, colorIndex) => (
                   <div
                     key={colorIndex}
                     onClick={() => handleColorClick(color)}
+                    title={color}
                     style={{
                       width: '30px',
                       height: '30px',
                       backgroundColor: color,
                       cursor: 'pointer',
                       border: '1px solid #ddd',
-                      borderRadius: '4px'
+                      borderRadius: '4px',
+                      transition: 'transform 0.2s',
+                      ':hover': {
+                        transform: 'scale(1.1)'
+                      }
                     }}
                   />
                 ))}
@@ -95,7 +134,9 @@ export const CustomPalleteSection = {
             </div>
           ))}
         </div>
-      </SectionContent>
+      </div>
     );
   })
 };
+
+export default CustomPalleteSection;

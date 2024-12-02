@@ -2,36 +2,44 @@
 "use client";
 
 import React, { useState } from 'react';
-import { SectionTab, SectionContent } from 'polotno/side-panel';
+import { SectionTab } from 'polotno/side-panel';
 import type { StoreType } from 'polotno/model/store';
 import { observer } from 'mobx-react-lite';
-import { Icon } from '@blueprintjs/core';
+import { Icon, IconName } from '@blueprintjs/core';
+import { CustomPalleteSection } from './CustomPalleteSection';
 
 interface CustomSectionProps {
   store: StoreType;
 }
 
-const tabs = [
+interface Tab {
+  id: string;
+  label: string;
+  icon: IconName;
+}
+
+const tabs: Tab[] = [
   { id: 'tab1', label: 'Upload Template', icon: 'upload' },
   { id: 'tab2', label: 'Palletes', icon: 'tint' },
   { id: 'tab3', label: 'Logos', icon: 'media' },
   { id: 'tab4', label: 'Fonts', icon: 'cog' },
-
 ];
 
 export const CustomSection = {
-  name: 'custom',
-  Tab: (props) => (
+  name: 'Design',
+  Tab: (props: any) => (
     <SectionTab name="Custom" {...props}>
       <Icon icon="hand" />
     </SectionTab>
   ),
-  Panel: observer(({ store }) => {
-    const [activeTab, setActiveTab] = useState('tab1');
-    const [file, setFile] = useState(null);
+  Panel: observer(({ store }: CustomSectionProps) => {
+    const [activeTab, setActiveTab] = useState<string>('tab1');
+    const [file, setFile] = useState<File | null>(null);
 
-    const handleFileChange = (event) => {
-      setFile(event.target.files[0]);
+    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      if (event.target.files) {
+        setFile(event.target.files[0]);
+      }
     };
 
     const handleUpload = () => {
@@ -97,18 +105,22 @@ export const CustomSection = {
         {/* Tab Content */}
         {activeTab === 'tab1' && (
           <div>
-          <h3>Upload Template</h3>
-          <input type="file" onChange={handleFileChange} />
-          <button onClick={handleUpload} disabled={!file}>
-            Upload
-          </button>
-        </div>
+            <h3>Upload Template</h3>
+            <input type="file" onChange={handleFileChange} />
+            <button onClick={handleUpload} disabled={!file}>
+              Upload
+            </button>
+            <div style={{ marginTop: '10px' }}>
+              <a href="/upload-template" target="_blank" rel="noopener noreferrer">
+                Upload New Template
+              </a>
+            </div>
+          </div>
         )}
         
         {activeTab === 'tab2' && (
           <div>
-            <h3>Settings</h3>
-            <p>Configure your options here</p>
+            <CustomPalleteSection.Panel store={store} />
           </div>
         )}
         
