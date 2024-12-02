@@ -8,6 +8,7 @@ import { observer } from 'mobx-react-lite';
 import { Icon, IconName } from '@blueprintjs/core';
 import { CustomPalleteSection } from './CustomPalleteSection';
 import { CustomLogoSection } from './CustomLogoSection';
+import { CustomFontSection } from './CustomFontSection';
 
 interface CustomSectionProps {
   store: StoreType;
@@ -30,7 +31,7 @@ export const CustomSection = {
   name: 'Design',
   Tab: (props: any) => (
     <SectionTab name="Custom" {...props}>
-      <Icon icon="hand" />
+      <Icon icon="cog" />
     </SectionTab>
   ),
   Panel: observer(({ store }: CustomSectionProps) => {
@@ -130,6 +131,11 @@ export const CustomSection = {
             <h3>Upload your logo</h3>
             <CustomLogoSection.Panel store={store} />
           </div>
+        )}
+        {activeTab === 'tab4' && (
+          <div>
+            <CustomFontSection.Panel store={store} />
+          </div> 
         )}
       </div>
     );

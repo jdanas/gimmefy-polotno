@@ -35,9 +35,9 @@ const PolotnoEditor = () => {
   return (
     <div style={{ width: '100vw', height: '100vh' }}>
       <PolotnoContainer>
-        <SidePanelWrap>
-          <SidePanel store={store.current} sections={sections} />
-        </SidePanelWrap>
+      <SidePanelWrap>
+        <SidePanel store={store.current} sections={sections} />
+      </SidePanelWrap>
         <WorkspaceWrap>
           <Toolbar store={store.current} downloadButtonEnabled />
           <Workspace store={store.current} />
