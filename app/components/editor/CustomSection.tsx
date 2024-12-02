@@ -7,6 +7,7 @@ import type { StoreType } from 'polotno/model/store';
 import { observer } from 'mobx-react-lite';
 import { Icon, IconName } from '@blueprintjs/core';
 import { CustomPalleteSection } from './CustomPalleteSection';
+import { CustomLogoSection } from './CustomLogoSection';
 
 interface CustomSectionProps {
   store: StoreType;
@@ -126,8 +127,8 @@ export const CustomSection = {
         
         {activeTab === 'tab3' && (
           <div>
-            <h3>Help</h3>
-            <p>Need assistance? Check our documentation.</p>
+            <h3>Upload your logo</h3>
+            <CustomLogoSection.Panel store={store} />
           </div>
         )}
       </div>
