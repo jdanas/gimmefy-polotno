@@ -1,24 +1,83 @@
 // components/editor/CustomFontSection.tsx
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { SectionTab, SectionContent } from 'polotno/side-panel';
 import { observer } from 'mobx-react-lite';
 import { Icon } from '@blueprintjs/core';
 import type { StoreType } from 'polotno/model/store';
 
-interface CustomFontSectionProps {
-  store: StoreType;
+interface GoogleFont {
+  id: string;
+  name: string;
+  family: string;
+  category: string;
+  url: string;
 }
 
-const defaultFonts = [
-  { name: 'Arial', family: 'Arial' },
-  { name: 'Times New Roman', family: 'Times New Roman' },
-  { name: 'Helvetica', family: 'Helvetica' },
-  { name: 'Courier New', family: 'Courier New' },
-  { name: 'Georgia', family: 'Georgia' },
-  { name: 'Verdana', family: 'Verdana' },
-];
+const FontPanel = observer(({ store }: { store: StoreType }) => {
+  const [fonts, setFonts] = useState<GoogleFont[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/fonts')
+      .then(res => res.json())
+      .then(data => {
+        setFonts(data.fonts);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error('Error loading fonts:', error);
+        setLoading(false);
+      });
+  }, []);
+
+  return (
+    <SectionContent name="fonts">
+      <div style={{ padding: '20px' }}>
+        {loading ? (
+          <div>Loading fonts...</div>
+        ) : (
+          <div style={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            gap: '10px',
+            maxHeight: '500px',
+            overflowY: 'auto'
+          }}>
+            {fonts.map((font) => (
+              <div
+                key={font.id}
+                style={{
+                  padding: '15px',
+                  border: '1px solid #ddd',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  background: 'white'
+                }}
+                onClick={() => {
+                  if (store.selectedElements[0]) {
+                    store.selectedElements[0].set({ fontFamily: font.family });
+                  }
+                }}
+              >
+                <div style={{ fontSize: '16px', marginBottom: '5px' }}>
+                  {font.name}
+                </div>
+                <div style={{ 
+                  fontFamily: font.family,
+                  fontSize: '14px'
+                }}>
+                  The quick brown fox jumps over the lazy dog
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </SectionContent>
+  );
+});
 
 export const CustomFontSection = {
   name: 'fonts',
@@ -27,65 +86,7 @@ export const CustomFontSection = {
       <Icon icon="font" />
     </SectionTab>
   )),
-  Panel: observer(({ store }: CustomFontSectionProps) => {
-    const handleFontSelect = (fontFamily: string) => {
-      const selectedElements = store.selectedElements;
-      if (selectedElements.length > 0) {
-        selectedElements.forEach(element => {
-          if (element.type === 'text') {
-            element.set({ fontFamily });
-          }
-        });
-      }
-    };
-
-    return (
-      <SectionContent name="fonts">
-        <div style={{ padding: '20px' }}>
-          <h3 style={{ marginBottom: '15px' }}>Available Fonts</h3>
-          <div style={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            gap: '10px',
-            maxHeight: '500px',
-            overflowY: 'auto'
-          }}>
-            {defaultFonts.map((font) => (
-              <button
-                key={font.family}
-                onClick={() => handleFontSelect(font.family)}
-                style={{
-                  padding: '10px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  background: 'white',
-                  cursor: 'pointer',
-                  fontFamily: font.family,
-                  textAlign: 'left',
-                  fontSize: '16px',
-                  ':hover': {
-                    background: '#f5f5f5'
-                  }
-                }}
-              >
-                <span style={{ fontFamily: font.family }}>
-                  {font.name}
-                </span>
-                <div style={{ 
-                  fontSize: '12px', 
-                  color: '#666',
-                  marginTop: '4px',
-                  fontFamily: font.family 
-                }}>
-                  The quick brown fox jumps over the lazy dog
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      </SectionContent>
-    );
-  })
+  Panel: FontPanel
 };
 
 export default CustomFontSection;
