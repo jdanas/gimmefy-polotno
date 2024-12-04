@@ -1,3 +1,4 @@
+// PolotnoEditor.tsx
 "use client";
 
 import { useEffect, useRef } from 'react';
@@ -9,13 +10,30 @@ import { SidePanel } from 'polotno/side-panel';
 import { Workspace } from 'polotno/canvas/workspace';
 import { createStore } from 'polotno/model/store';
 import { DEFAULT_SECTIONS } from 'polotno/side-panel';
-import { CustomPalleteSection } from './CustomPalleteSection';
+import type { Section } from 'polotno/side-panel';
 import { CustomSection } from './CustomSection';
+
+import { createContext } from 'react';
 
 import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/popover2/lib/css/blueprint-popover2.css';
 
-const PolotnoEditor = () => {
+
+
+export const CustomDataContext = createContext<{
+  authKey: string;
+  onPanelClick?: () => void;
+}>({ authKey: '' });
+
+// Dummy auth key for testing
+const DUMMY_AUTH_KEY = "abc123xyz789-test-auth-key";
+
+interface PolotnoEditorProps {
+  authKey?: string;
+  onPanelClick?: () => void;
+}
+
+const PolotnoEditor = ({ authKey = DUMMY_AUTH_KEY, onPanelClick }: PolotnoEditorProps) => {
   const store = useRef(createStore({
     key: process.env.NEXT_PUBLIC_POLOTNO_API_KEY || 'nFA5H9elEytDyPyvKL7T',
     showCredit: true
@@ -27,25 +45,25 @@ const PolotnoEditor = () => {
     }
   }, []);
 
-  const sections = [
+  const sections: Section[] = [
     CustomSection,
     ...DEFAULT_SECTIONS
   ];
 
   return (
-    <div style={{ width: '100vw', height: '100vh' }}>
-      <PolotnoContainer>
-      <SidePanelWrap>
-        <SidePanel store={store.current} sections={sections} />
-      </SidePanelWrap>
-        <WorkspaceWrap>
-          <Toolbar store={store.current} downloadButtonEnabled />
-          <Workspace store={store.current} />
-          <ZoomButtons store={store.current} />
-          <PagesTimeline store={store.current} />
-        </WorkspaceWrap>
-      </PolotnoContainer>
-    </div>
+    <CustomDataContext.Provider value={{ authKey, onPanelClick }}>
+      <div style={{ width: '100vw', height: '100vh' }}>
+        <PolotnoContainer>
+          <SidePanelWrap>
+            <SidePanel store={store.current} sections={sections} />
+          </SidePanelWrap>
+          <WorkspaceWrap>
+            <Toolbar store={store.current} downloadButtonEnabled />
+            {/* ... rest of your components */}
+          </WorkspaceWrap>
+        </PolotnoContainer>
+      </div>
+    </CustomDataContext.Provider>
   );
 };
 

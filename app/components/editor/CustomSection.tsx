@@ -2,18 +2,21 @@
 "use client";
 
 import React, { useState } from 'react';
-import { SectionTab } from 'polotno/side-panel';
+import { Section, SectionTab } from 'polotno/side-panel';
 import { observer } from 'mobx-react-lite';
 import { Icon, Button, Intent, Dialog } from '@blueprintjs/core';
 import type { StoreType } from 'polotno/model/store';
 import { CustomPalleteSection } from './CustomPalleteSection';
 import { CustomLogoSection } from './CustomLogoSection';
 import { CustomFontSection } from './CustomFontSection';
+import { useContext } from 'react';
+import { CustomDataContext } from './PolotnoEditor';
 
 interface CustomSectionProps {
   store: StoreType;
+  authKey: string;
+  onPanelClick?: () => void;
 }
-
 interface Tab {
   id: string;
   label: string;
@@ -52,7 +55,9 @@ export const CustomSection = {
       <Icon icon="cog" />
     </SectionTab>
   ),
-  Panel: observer(({ store }: CustomSectionProps) => {
+  Panel: observer(({ store }) => {
+    const { authKey, onPanelClick } = useContext(CustomDataContext);
+    console.log('AuthKey received:', authKey); // Log authKey
     const [activeTab, setActiveTab] = useState<string>('tab1');
     const [file, setFile] = useState<File | null>(null);
     const [isLightboxOpen, setIsLightboxOpen] = useState<boolean>(false);
@@ -81,6 +86,7 @@ export const CustomSection = {
 
     return (
       <div>
+        {/* Tab Navigation */}
         <div style={{ 
           display: 'flex',
           gap: '10px',
@@ -128,6 +134,7 @@ export const CustomSection = {
           ))}
         </div>
 
+        {/* Tab Content */}
         {activeTab === 'tab1' && (
           <div>
             <input 
@@ -155,6 +162,26 @@ export const CustomSection = {
             >
               Browse Images
             </Button>
+            <div 
+              style={{
+                padding: '15px',
+                margin: '10px 0',
+                backgroundColor: '#f5f5f5',
+                borderRadius: '4px',
+                border: '1px solid #ddd',
+                cursor: 'pointer' // Add cursor pointer
+              }}
+              onClick={() => {
+                console.log('click handler accepting callback');
+                // Call the callback if provided
+                if (onPanelClick) {
+                  onPanelClick();
+                }
+              }}
+            >
+              <h3>Hello World</h3>
+              <p>Auth Key: {authKey}</p>
+            </div>
           </div>
         )}
         
@@ -176,6 +203,7 @@ export const CustomSection = {
           </div>
         )}
 
+        {/* Image Gallery Dialog */}
         <Dialog
           isOpen={isLightboxOpen}
           onClose={toggleLightbox}
