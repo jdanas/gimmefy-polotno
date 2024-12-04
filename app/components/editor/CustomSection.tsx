@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { SectionTab } from 'polotno/side-panel';
 import type { StoreType } from 'polotno/model/store';
 import { observer } from 'mobx-react-lite';
-import { Icon, IconName } from '@blueprintjs/core';
+import { Icon, IconName, Dialog, Button, Intent } from '@blueprintjs/core';
 import { CustomPalleteSection } from './CustomPalleteSection';
 import { CustomLogoSection } from './CustomLogoSection';
 import { CustomFontSection } from './CustomFontSection';
@@ -37,6 +37,7 @@ export const CustomSection = {
   Panel: observer(({ store }: CustomSectionProps) => {
     const [activeTab, setActiveTab] = useState<string>('tab1');
     const [file, setFile] = useState<File | null>(null);
+    const [isLightboxOpen, setIsLightboxOpen] = useState<boolean>(false);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       if (event.target.files) {
@@ -51,6 +52,10 @@ export const CustomSection = {
         // Reset file input
         setFile(null);
       }
+    };
+
+    const toggleLightbox = () => {
+      setIsLightboxOpen(!isLightboxOpen);
     };
 
     return (
@@ -137,6 +142,43 @@ export const CustomSection = {
             <CustomFontSection.Panel store={store} />
           </div> 
         )}
+
+        <Button
+          icon="media"
+          intent={Intent.PRIMARY}
+          onClick={toggleLightbox}
+          style={{ 
+            marginTop: '20px',
+            borderRadius: '4px',
+            padding: '10px 20px'
+          }}
+        >
+          Open Photo 
+        </Button>
+
+        <Dialog
+          isOpen={isLightboxOpen}
+          onClose={toggleLightbox}
+          title="Lightbox"
+        >
+          <div className="bp3-dialog-body">
+            <p>Hello world</p>
+          </div>
+          <div className="bp3-dialog-footer">
+          <Button
+            icon="cross"
+            intent={Intent.DANGER}
+            onClick={toggleLightbox}
+            style={{ 
+              marginTop: '10px',
+              borderRadius: '4px',
+              padding: '10px 20px'
+            }}
+          >
+            Close
+          </Button>
+          </div>
+        </Dialog>
       </div>
     );
   }),
