@@ -30,6 +30,11 @@ const dummyImages = [
     id: 2, 
     url: 'https://picsum.photos/400/301',
     title: 'Sample Image 2'
+  },
+  {
+    id: 3,
+    url: 'https://picsum.photos/401/300',
+    title: 'Sample Image 3'
   }
 ];
 
@@ -43,7 +48,7 @@ const tabs: Tab[] = [
 export const CustomSection = {
   name: 'Design',
   Tab: (props: any) => (
-    <SectionTab name="Custom" {...props}>
+    <SectionTab name="POC1" {...props}>
       <Icon icon="cog" />
     </SectionTab>
   ),
