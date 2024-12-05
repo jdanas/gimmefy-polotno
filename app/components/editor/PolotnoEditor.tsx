@@ -26,7 +26,7 @@ export const CustomDataContext = createContext<{
 }>({ authKey: '' });
 
 // Dummy auth key for testing
-const DUMMY_AUTH_KEY = "abc123xyz789-test-auth-key";
+const DUMMY_AUTH_KEY = `test-auth-key-${Math.random().toString(36).substr(2, 9)}`;
 
 interface PolotnoEditorProps {
   authKey?: string;
@@ -51,19 +51,21 @@ const PolotnoEditor = ({ authKey = DUMMY_AUTH_KEY, onPanelClick }: PolotnoEditor
   ];
 
   return (
-    <CustomDataContext.Provider value={{ authKey, onPanelClick }}>
-      <div style={{ width: '100vw', height: '100vh' }}>
-        <PolotnoContainer>
+    <div style={{ width: '100vw', height: '100vh' }}>
+      <PolotnoContainer>
+        <CustomDataContext.Provider value={{ authKey, onPanelClick }}>
           <SidePanelWrap>
             <SidePanel store={store.current} sections={sections} />
           </SidePanelWrap>
           <WorkspaceWrap>
             <Toolbar store={store.current} downloadButtonEnabled />
-            {/* ... rest of your components */}
+            <Workspace store={store.current} />
+            <ZoomButtons store={store.current} />
+            <PagesTimeline store={store.current} />
           </WorkspaceWrap>
-        </PolotnoContainer>
-      </div>
-    </CustomDataContext.Provider>
+        </CustomDataContext.Provider>
+      </PolotnoContainer>
+    </div>
   );
 };
 
