@@ -264,41 +264,63 @@ export const CustomSection = {
 
         {/* Add Gimmefy Popup Dialog */}
         <Dialog
-          isOpen={isGimmefyPopupOpen}
-          onClose={toggleGimmefyPopup}
-          title="Gimmefy Popup"
-          style={{ width: '500px' }}
-        >
-          <div className="bp3-dialog-body">
-            <div 
-              style={{
-                padding: '15px',
-                backgroundColor: '#f5f5f5',
-                borderRadius: '4px',
-                border: '1px solid #ddd',
-                marginBottom: '20px'
-              }}
-              onClick={() => {
-                console.log('click handler accepting callback');
-                if (onPanelClick) {
-                  onPanelClick();
-                }
-              }}
-            >
-              <h3>Hello World</h3>
-              <p>Auth Key: {authKey}</p>
-            </div>
-          </div>
-          <div className="bp3-dialog-footer">
-            <Button
-              icon="cross"
-              intent={Intent.DANGER}
-              onClick={toggleGimmefyPopup}
-            >
-              Close Popup
-            </Button>
-          </div>
-        </Dialog>
+  isOpen={isGimmefyPopupOpen}
+  onClose={toggleGimmefyPopup}
+  title="Gimmefy Popup"
+  style={{ width: '500px' }}
+>
+  <div className="bp3-dialog-body">
+    <div 
+      style={{
+        padding: '15px',
+        backgroundColor: '#f5f5f5',
+        borderRadius: '4px',
+        border: '1px solid #ddd',
+        marginBottom: '20px'
+      }}
+    >
+      <h3>Hello World</h3>
+      <p>Auth Key: {authKey}</p>
+      <Button
+        icon="add"
+        intent={Intent.SUCCESS}
+        onClick={() => {
+          // Add Hello World text
+          store.activePage?.addElement({
+            type: 'text',
+            x: 50,
+            y: 50,
+            text: 'Hello World',
+            fontSize: 24
+          });
+          
+          // Add Auth Key text below
+          store.activePage?.addElement({
+            type: 'text',
+            x: 50,
+            y: 100,
+            text: `Auth Key: ${authKey}`,
+            fontSize: 16
+          });
+          
+          // Close popup after insertion
+          toggleGimmefyPopup();
+        }}
+      >
+        Insert to Canvas
+      </Button>
+    </div>
+  </div>
+    <div className="bp3-dialog-footer">
+      <Button
+        icon="cross"
+        intent={Intent.DANGER}
+        onClick={toggleGimmefyPopup}
+      >
+        Close Popup
+      </Button>
+    </div>
+  </Dialog>
 
 
 
