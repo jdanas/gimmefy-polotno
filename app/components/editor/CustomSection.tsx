@@ -61,8 +61,10 @@ export const CustomSection = {
     const [activeTab, setActiveTab] = useState<string>('tab1');
     const [file, setFile] = useState<File | null>(null);
     const [isLightboxOpen, setIsLightboxOpen] = useState<boolean>(false);
+    const [isGimmefyPopupOpen, setIsGimmefyPopupOpen] = useState<boolean>(false);
 
     const toggleLightbox = () => setIsLightboxOpen(!isLightboxOpen);
+    const toggleGimmefyPopup = () => setIsGimmefyPopupOpen(!isGimmefyPopupOpen);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       if (event.target.files) {
@@ -181,6 +183,15 @@ export const CustomSection = {
             >
               <h3>Hello World</h3>
               <p>Auth Key: {authKey}</p>
+              <Button
+              icon="application"
+              intent={Intent.PRIMARY}
+              onClick={toggleGimmefyPopup}
+              style={{ marginTop: '10px' }}
+            >
+              Open Gimmefy Popup
+            </Button>
+
             </div>
           </div>
         )}
@@ -249,6 +260,48 @@ export const CustomSection = {
             </Button>
           </div>
         </Dialog>
+
+
+        {/* Add Gimmefy Popup Dialog */}
+        <Dialog
+          isOpen={isGimmefyPopupOpen}
+          onClose={toggleGimmefyPopup}
+          title="Gimmefy Popup"
+          style={{ width: '500px' }}
+        >
+          <div className="bp3-dialog-body">
+            <div 
+              style={{
+                padding: '15px',
+                backgroundColor: '#f5f5f5',
+                borderRadius: '4px',
+                border: '1px solid #ddd',
+                marginBottom: '20px'
+              }}
+              onClick={() => {
+                console.log('click handler accepting callback');
+                if (onPanelClick) {
+                  onPanelClick();
+                }
+              }}
+            >
+              <h3>Hello World</h3>
+              <p>Auth Key: {authKey}</p>
+            </div>
+          </div>
+          <div className="bp3-dialog-footer">
+            <Button
+              icon="cross"
+              intent={Intent.DANGER}
+              onClick={toggleGimmefyPopup}
+            >
+              Close Popup
+            </Button>
+          </div>
+        </Dialog>
+
+
+
       </div>
     );
   })
