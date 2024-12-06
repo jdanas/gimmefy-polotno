@@ -18,8 +18,6 @@ import { createContext } from 'react';
 import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/popover2/lib/css/blueprint-popover2.css';
 
-
-
 export const CustomDataContext = createContext<{
   authKey: string;
   onPanelClick?: () => void;
@@ -43,6 +41,19 @@ const PolotnoEditor = ({ authKey = DUMMY_AUTH_KEY, onPanelClick }: PolotnoEditor
     if (store.current.pages.length === 0) {
       store.current.addPage();
     }
+  }, []);
+
+  useEffect(() => {
+    // Handle messages from parent window
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'textToImage') {
+        // Handle text to image request
+        window.parent.postMessage({ type: 'textToImage', data: {} }, '*');
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
   }, []);
 
   const sections: Section[] = [

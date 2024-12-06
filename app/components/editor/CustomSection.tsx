@@ -1,7 +1,7 @@
 // components/editor/CustomSection.tsx
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Section, SectionTab } from 'polotno/side-panel';
 import { observer } from 'mobx-react-lite';
 import { Icon, Button, Intent, Dialog } from '@blueprintjs/core';
@@ -48,6 +48,15 @@ const tabs: Tab[] = [
   { id: 'tab4', label: 'Fonts', icon: 'font' },
 ];
 
+// Add function to get URL params
+const getTokenFromUrl = () => {
+  if (typeof window !== 'undefined') {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('token');
+  }
+  return null;
+};
+
 export const CustomSection = {
   name: 'Design',
   Tab: (props: any) => (
@@ -62,6 +71,9 @@ export const CustomSection = {
     const [file, setFile] = useState<File | null>(null);
     const [isLightboxOpen, setIsLightboxOpen] = useState<boolean>(false);
     const [isGimmefyPopupOpen, setIsGimmefyPopupOpen] = useState<boolean>(false);
+
+    // Get token from URL
+    const urlToken = getTokenFromUrl();
 
     const toggleLightbox = () => setIsLightboxOpen(!isLightboxOpen);
     const toggleGimmefyPopup = () => setIsGimmefyPopupOpen(!isGimmefyPopupOpen);
@@ -84,6 +96,17 @@ export const CustomSection = {
         });
         toggleLightbox();
       }
+    };
+
+    const handleGimmefyClick = () => {
+      // Notify parent window
+      window.parent.postMessage({
+        type: 'textToImage',
+        data: {
+          text: 'Hello World',
+          authKey: urlToken || 'default-token'
+        }
+      }, '*');
     };
 
     return (
@@ -190,6 +213,16 @@ export const CustomSection = {
               style={{ marginTop: '10px' }}
             >
               Open Gimmefy Popup
+            </Button>
+
+            
+            <Button
+              icon="application"
+              intent={Intent.PRIMARY}
+              onClick={handleGimmefyClick}
+              style={{ marginTop: '10px' }}
+            >
+              Send Data to Parent
             </Button>
 
             </div>

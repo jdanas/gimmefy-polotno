@@ -1,0 +1,38 @@
+<!-- public/test.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vividly Editor Test</title>
+</head>
+<body>
+    <div id="vividly-editor-container"></div>
+
+    <script src="/embed.js"></script>
+    <script>
+        // Initialize editor when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            const editor = createVividlyEditor({
+                token: 'test-auth-token-123', // need to change this to the actual token 
+                editorUrl: 'http://localhost:3000', // need to change this once the editor is deployed
+                container: '#vividly-editor-container', // Specify container
+                onTextToImageButtonClick: (data) => {
+                    console.log('Text to Image clicked:', data);
+                },
+                onPublish: (data) => {
+                    console.log('Published:', data);
+                }
+            });
+        });
+    </script>
+
+    <style>
+        #vividly-editor-container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+    </style>
+</body>
+</html>
