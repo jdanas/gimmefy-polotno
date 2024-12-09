@@ -13,12 +13,12 @@ content-type: application/json
 }
 
 ### Get Templates
-GET {{baseUrl}}/templates
+GET {{baseUrl}}/vividly/templates?type=main-template
 content-type: application/json
 Authorization: Bearer {{login.response.body.payload.accessToken}}
 
 ### Create Template
-POST {{baseUrl}}/templates
+POST {{baseUrl}}/vividly/templates
 content-type: application/json
 Authorization: Bearer {{login.response.body.payload.accessToken}}
 
@@ -30,16 +30,6 @@ Authorization: Bearer {{login.response.body.payload.accessToken}}
 }
 
 ### Get Template by ID
-GET {{baseUrl}}/templates/template-123
+GET {{baseUrl}}/vividly/templates/ee175dbdd9226b9f5900a52b72abc3cc
 content-type: application/json
 Authorization: Bearer {{login.response.body.payload.accessToken}}
-
-### Update Template
-PATCH {{baseUrl}}/templates/template-123
-content-type: application/json
-Authorization: Bearer {{login.response.body.payload.accessToken}}
-
-{
-    "name": "Updated Template",
-    "description": "Updated description"
-}
