@@ -1,0 +1,45 @@
+@baseUrl = https://apidev.gimmefy.ai/v2
+@email = shalu.wasu@teemuno.com
+@password = P12345678
+
+### Login
+# @name login
+POST {{baseUrl}}/users/login
+content-type: application/json
+
+{
+    "email": "{{email}}",
+    "password": "{{password}}"
+}
+
+### Get Templates
+GET {{baseUrl}}/templates
+content-type: application/json
+Authorization: Bearer {{login.response.body.payload.accessToken}}
+
+### Create Template
+POST {{baseUrl}}/templates
+content-type: application/json
+Authorization: Bearer {{login.response.body.payload.accessToken}}
+
+{
+    "name": "Test Template",
+    "description": "Test description",
+    "content": "{}",
+    "type": "main-template"
+}
+
+### Get Template by ID
+GET {{baseUrl}}/templates/template-123
+content-type: application/json
+Authorization: Bearer {{login.response.body.payload.accessToken}}
+
+### Update Template
+PATCH {{baseUrl}}/templates/template-123
+content-type: application/json
+Authorization: Bearer {{login.response.body.payload.accessToken}}
+
+{
+    "name": "Updated Template",
+    "description": "Updated description"
+}
