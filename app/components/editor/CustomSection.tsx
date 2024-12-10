@@ -91,7 +91,6 @@ const tabs: Tab[] = [
   { id: 'tab2', label: 'Palletes', icon: 'tint' },
   { id: 'tab3', label: 'Logos', icon: 'media' },
   { id: 'tab4', label: 'Fonts', icon: 'font' },
-  { id: 'tab5', label: 'POC', icon: 'align-left' }
 ];
 
 // Add function to get URL params
@@ -248,6 +247,53 @@ export const CustomSection = {
               Upload Template
             </Button>
             
+            <Button
+              icon="media"
+              intent={Intent.SUCCESS}
+              onClick={toggleLightbox}
+              style={{ marginLeft: '10px' }}
+            >
+              Browse Images
+            </Button>
+            <div 
+              style={{
+                padding: '15px',
+                margin: '10px 0',
+                backgroundColor: '#f5f5f5',
+                borderRadius: '4px',
+                border: '1px solid #ddd',
+                cursor: 'pointer' // Add cursor pointer
+              }}
+              onClick={() => {
+                console.log('click handler accepting callback');
+                // Call the callback if provided
+                if (onPanelClick) {
+                  onPanelClick();
+                }
+              }}
+            >
+              <h3>Hello World</h3>
+              <p>Auth Key: {authKey}</p>
+              <Button
+              icon="application"
+              intent={Intent.PRIMARY}
+              onClick={toggleGimmefyPopup}
+              style={{ marginTop: '10px' }}
+            >
+              Open Gimmefy Popup
+            </Button>
+
+            
+            <Button
+              icon="application"
+              intent={Intent.PRIMARY}
+              onClick={handleGimmefyClick}
+              style={{ marginTop: '10px' }}
+            >
+              Send Data to Parent
+            </Button>
+
+
             {/* Add Templates Grid */}
             <div style={{ height: 'calc(100vh - 200px)', overflow: 'auto' }}>
               {isLoading && <div>Loading templates...</div>}
@@ -303,56 +349,6 @@ export const CustomSection = {
         {activeTab === 'tab4' && (
           <div>
             <CustomFontSection.Panel store={store} />
-          </div>
-        )}
-
-        {activeTab === 'tab5' && (
-          <div>
-            <Button
-              icon="media"
-              intent={Intent.SUCCESS}
-              onClick={toggleLightbox}
-              style={{ marginLeft: '10px' }}
-            >
-              Browse Images
-            </Button>
-            <div 
-              style={{
-                padding: '15px',
-                margin: '10px 0',
-                backgroundColor: '#f5f5f5',
-                borderRadius: '4px',
-                border: '1px solid #ddd',
-                cursor: 'pointer' // Add cursor pointer
-              }}
-              onClick={() => {
-                console.log('click handler accepting callback');
-                // Call the callback if provided
-                if (onPanelClick) {
-                  onPanelClick();
-                }
-              }}
-            >
-              <h3>Hello World</h3>
-              <p>Auth Key: {authKey}</p>
-              <Button
-              icon="application"
-              intent={Intent.PRIMARY}
-              onClick={toggleGimmefyPopup}
-              style={{ marginTop: '10px' }}
-            >
-              Open Gimmefy Popup
-            </Button>
-
-            
-            <Button
-              icon="application"
-              intent={Intent.PRIMARY}
-              onClick={handleGimmefyClick}
-              style={{ marginTop: '10px' }}
-            >
-              Send Data to Parent
-            </Button>
           </div>
         )}
 
