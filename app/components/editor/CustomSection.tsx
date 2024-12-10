@@ -176,7 +176,7 @@ export const CustomSection = {
       fetchTemplates();
     }, []);
 
-    
+
     return (
       <div>
         {/* Tab Navigation */}
@@ -317,8 +317,8 @@ export const CustomSection = {
                   try {
                     const api = new TemplateApiService();
                     const templateDetail = await api.getTemplateById(item.id);
-                    if (templateDetail.content) {
-                      store.loadJSON(JSON.parse(templateDetail.content));
+                    if (templateDetail.payload) {
+                      store.loadJSON(JSON.parse(templateDetail.payload.content));
                     }
                   } catch (err) {
                     console.error('Failed to load template:', err);
