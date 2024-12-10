@@ -1,0 +1,49 @@
+
+{
+  "width": 1080,
+  "height": 1080,
+  "fonts": [],
+  "pages": [
+    {
+      "id": "XTAUnNQ6Xy",
+      "children": [
+        {
+          "id": "obEQAFg7eO",
+          "type": "image",
+          "src": "https://images.unsplash.com/photo-1610214092317-fcde10de425b...",
+          "width": 496.79,
+          "height": 661.97,
+          "x": 296.44,
+          "y": 82.12
+        },
+        {
+          "id": "j6y5U5wgZi",
+          "type": "text",
+          "text": "WEEKEND",
+          "fontSize": 90,
+          "fontFamily": "Roboto",
+          "fill": "rgba(255,255,255,1)",
+          "x": 263.34,
+          "y": 847.14
+        },
+        {
+          "id": "TWOzdyOK0Q", 
+          "type": "text",
+          "text": "25% OFF",
+          "fontSize": 60,
+          "x": 360,
+          "y": 769.95
+        },
+        {
+          "id": "kxyrH5B0Bb",
+          "type": "text", 
+          "text": "SALE",
+          "fontSize": 60,
+          "x": 364.83,
+          "y": 963.14
+        }
+      ],
+      "background": "white"
+    }
+  ]
+}

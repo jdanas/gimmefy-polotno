@@ -23,14 +23,38 @@ content-type: application/json
 Authorization: Bearer {{login.response.body.payload.accessToken}}
 
 {
-    "name": "Sample Template Derek 2",
+    "name": "Sample Template Derek 3",
     "description": "A basic template with text and image",
-    "content": "{\"width\":800,\"height\":600,\"pages\":[{\"elements\":[{\"type\":\"text\",\"x\":100,\"y\":50,\"width\":400,\"height\":100,\"text\":\"Hello World\",\"fontSize\":32,\"fontFamily\":\"Arial\",\"fill\":\"#000000\"},{\"type\":\"image\",\"x\":100,\"y\":200,\"width\":300,\"height\":200,\"src\":\"https://picsum.photos/300/200\"},{\"type\":\"rectangle\",\"x\":500,\"y\":50,\"width\":200,\"height\":100,\"fill\":\"#f0f0f0\",\"stroke\":\"#000000\",\"strokeWidth\":2}]}]}",
-    "type": "main-template",
-    "category": "personal-templates"
+    "content": "{\"width\":800,\"height\":600,\"pages\":[{\"id\":\"page1\",\"background\":\"white\",\"elements\":[{\"id\":\"text1\",\"type\":\"text\",\"x\":100,\"y\":50,\"width\":400,\"height\":100,\"text\":\"Hello World\",\"fontSize\":32,\"fontFamily\":\"Arial\",\"fill\":\"#000000\"},{\"id\":\"image1\",\"type\":\"image\",\"x\":100,\"y\":200,\"width\":300,\"height\":200,\"src\":\"https://picsum.photos/300/200\"},{\"id\":\"rect1\",\"type\":\"rectangle\",\"x\":500,\"y\":50,\"width\":200,\"height\":100,\"fill\":\"#f0f0f0\",\"stroke\":\"#000000\",\"strokeWidth\":2}]}]}",
+    "type": "main-template"
 }
 
 ### Get Template by ID
 GET {{baseUrl}}/vividly/templates/1c3c29d357dda79147aa93215a3c4c38
+content-type: application/json
+Authorization: Bearer {{login.response.body.payload.accessToken}}
+
+
+
+### Get Template Sample Derek Test 2
+GET {{baseUrl}}/vividly/templates/9944cd46b8f62ad60846adf9fd4a67fa
+content-type: application/json
+Authorization: Bearer {{login.response.body.payload.accessToken}}
+
+### Update Template Content
+PATCH {{baseUrl}}/vividly/templates/9944cd46b8f62ad60846adf9fd4a67fa
+content-type: application/json
+Authorization: Bearer {{login.response.body.payload.accessToken}}
+
+{
+    "name": "Updated Sample Template",
+    "description": "Updated basic template with text and image",
+    "content": "{\"width\":800,\"height\":600,\"pages\":[{\"id\":\"page1\",\"background\":\"white\",\"elements\":[{\"id\":\"text1\",\"type\":\"text\",\"x\":100,\"y\":50,\"width\":400,\"height\":100,\"text\":\"Hello World\",\"fontSize\":32,\"fontFamily\":\"Arial\",\"fill\":\"#000000\"},{\"id\":\"image1\",\"type\":\"image\",\"x\":100,\"y\":200,\"width\":300,\"height\":200,\"src\":\"https://picsum.photos/300/200\"},{\"id\":\"rect1\",\"type\":\"rectangle\",\"x\":500,\"y\":50,\"width\":200,\"height\":100,\"fill\":\"#f0f0f0\",\"stroke\":\"#000000\",\"strokeWidth\":2}]}]}",
+    "type": "main-template"
+}
+
+
+### Get Template Sample Polotno test 
+GET {{baseUrl}}/vividly/templates/8f7fc302-b620-11ef-bc15-065df57d3cd1
 content-type: application/json
 Authorization: Bearer {{login.response.body.payload.accessToken}}
