@@ -56,9 +56,18 @@ const PolotnoEditor = ({ authKey = DUMMY_AUTH_KEY, onPanelClick }: PolotnoEditor
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
+  // Filter out unwanted sections or specify only the ones you want
+  const filteredDefaultSections = DEFAULT_SECTIONS.filter(section => 
+    ![
+      'templates',// Remove default templates
+      'photos',  // Remove Photos
+      // Add other section names you want to remove
+    ].includes(section.name.toLowerCase())
+  );
+
   const sections: Section[] = [
     CustomSection,
-    ...DEFAULT_SECTIONS
+    ...filteredDefaultSections
   ];
 
   return (
