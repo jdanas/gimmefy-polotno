@@ -1,63 +1,73 @@
 // templateApi.ts
-interface Template {
-  uid: string;
-  name: string;
-  description: string;
-  thumbnail_url: string;
-  category: string;
-  type: "main-template" | "text-template";
-  is_bookmarked: number;
-  content?: string;
+interface LoginResponse {
+  success: boolean;
+  message: string;
+  payload: {
+    accessToken: string;
+  };
 }
 
 interface TemplateResponse {
+  templates: any[]; // Adjust the type according to your actual response structure
+}
+
+interface TemplateDetailResponse {
   success: boolean;
   message: string;
-  payload: Template[];
-  meta: {
-    totalRecords: number;
+  payload: {
+    uid: string;
+    name: string;
+    description: string;
+    content: string;
+    thumbnail_url: string;
+    category: string;
+    type: string;
   };
 }
-
-interface DetailedTemplate extends Template {
-  content: string;
-  dimensions?: {
-    width: number;
-    height: number;
-  };
-  pages?: Array<{
-    elements: Array<any>;
-  }>;
-}
-
-interface DetailedTemplateResponse {
-  success: boolean;
-  message: string;
-  payload: DetailedTemplate;
-}
-
-
 
 export class TemplateApiService {
   private baseUrl: string;
   private headers: HeadersInit;
-  private token: string;
+  private token: string | null = null;
 
   constructor() {
     this.baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://apidev.gimmefy.ai/v2';
-    this.token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTAsInJvbGVfaWQiOjEsIm9yZ2FuaXNhdGlvbl9pZCI6MSwicGFydG5lcl9pZCI6MSwiaWF0IjoxNzMzNzI2MTY0LCJleHAiOjE3MzQzMzA5NjR9.XD0SAul4LmgGZ5zOCfSAotDA9mac4HwCCpajiptRyx8';
     this.headers = {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${this.token}`
+      'Content-Type': 'application/json'
     };
   }
 
-  async getTemplates(type: 'main-template' | 'text-template' = 'main-template'): Promise<TemplateResponse> {
+  async login(email: string, password: string): Promise<void> {
     try {
-      const url = `${this.baseUrl}/vividly/templates/${type}`;
-      console.log(`Fetching templates from: ${url}`);
+      const response = await fetch(`${this.baseUrl}/users/login`, {
+        method: 'POST',
+        headers: this.headers,
+        body: JSON.stringify({ email, password })
+      });
 
-      const response = await fetch(url, {
+      if (!response.ok) {
+        throw new Error(`Login failed: ${response.status}`);
+      }
+
+      const data: LoginResponse = await response.json();
+      this.token = data.payload.accessToken;
+      this.headers = {
+        ...this.headers,
+        'Authorization': `Bearer ${this.token}`
+      };
+    } catch (err) {
+      console.error('Login failed:', err);
+      throw err;
+    }
+  }
+
+  async getTemplates(): Promise<TemplateResponse> {
+    if (!this.token) {
+      await this.login('shalu.wasu@teemuno.com', 'P12345678');
+    }
+
+    try {
+      const response = await fetch(`${this.baseUrl}/vividly/templates?type=main-template`, {
         headers: this.headers,
         method: 'GET'
       });
@@ -66,54 +76,43 @@ export class TemplateApiService {
         throw new Error(`Failed to fetch templates: ${response.status}`);
       }
 
-      const data: TemplateResponse = await response.json();
-      return data;
+      return response.json();
+    } catch (err) {
+      console.error('Request failed:', err);
+      throw err;
+    }
+  }
+
+
+  async getTemplateById(uid: string): Promise<TemplateDetailResponse> {
+    if (!this.token) {
+      await this.login('shalu.wasu@teemuno.com', 'P12345678');
+    }
+
+    try {
+      console.log(`Fetching template: ${uid}`);
+      const response = await fetch(
+        `${this.baseUrl}/vividly/templates/${uid}?type=main-template`, 
+        {
+          headers: this.headers,
+          method: 'GET'
+        }
+      );
+
+      console.log('Response status:', response.status);
+      const responseText = await response.text();
+      console.log('Response body:', responseText);
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch template: ${response.status}`);
+      }
+
+      return JSON.parse(responseText);
     } catch (err) {
       console.error('Template fetch failed:', err);
       throw err;
     }
   }
 
-  async getTemplateById(templateId: string): Promise<Template> {
-    const response = await fetch(`${this.baseUrl}/vividly/templates/${templateId}`, {
-      headers: this.headers
-    });
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch template: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return data.payload;
-  }
-
-  async getTemplateDetails(uid: string): Promise<DetailedTemplate> {
-    try {
-      console.log(`Fetching template details for UID: ${uid}`);
-      
-      const url = `${this.baseUrl}/vividly/templates/${uid}`;
-      const response = await fetch(url, {
-        headers: this.headers,
-        method: 'GET'
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch template details: ${response.status}`);
-      }
-
-      const responseText = await response.text();
-      console.log('Response:', responseText);
-
-      const data: DetailedTemplateResponse = JSON.parse(responseText);
-      
-      if (!data.success) {
-        throw new Error(`API Error: ${data.message}`);
-      }
-
-      return data.payload;
-    } catch (err) {
-      console.error('Template details fetch failed:', err);
-      throw err;
-    }
-  }
 }

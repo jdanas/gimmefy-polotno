@@ -12,6 +12,32 @@ import { CustomFontSection } from './CustomFontSection';
 import { useContext } from 'react';
 import { CustomDataContext } from './PolotnoEditor';
 
+// Add these imports at the top
+import { TemplateApiService } from '../../services/templateApi';
+import { ImagesGrid } from 'polotno/side-panel/images-grid';
+
+// Interface definitions
+interface StoreType {
+  activePage?: {
+    addElement: (element: {
+      type: string;
+      src: string;
+      width: number;
+      height: number;
+      x: number;
+      y: number;
+    }) => Promise<void>;
+  };
+}
+
+interface PanelProps {
+  store: StoreType;
+}
+
+interface TabProps {
+  name: string;
+  [key: string]: any; // For additional props being spread
+}
 interface CustomSectionProps {
   store: StoreType;
   authKey: string;
@@ -21,6 +47,25 @@ interface Tab {
   id: string;
   label: string;
   icon: string;
+}
+interface Template {
+  uid: string;
+  thumbnail_url: string;
+  name: string;
+  description?: string;
+  width?: number;
+  height?: number;
+  created_at?: string;
+}
+
+interface ApiError {
+  message: string;
+  stack?: string;
+  response?: {
+    data?: any;
+    status?: number;
+    statusText?: string;
+  };
 }
 
 const dummyImages = [
@@ -66,11 +111,14 @@ export const CustomSection = {
   ),
   Panel: observer(({ store }) => {
     const { authKey, onPanelClick } = useContext(CustomDataContext);
-    console.log('AuthKey received:', authKey); // Log authKey
     const [activeTab, setActiveTab] = useState<string>('tab1');
     const [file, setFile] = useState<File | null>(null);
     const [isLightboxOpen, setIsLightboxOpen] = useState<boolean>(false);
     const [isGimmefyPopupOpen, setIsGimmefyPopupOpen] = useState<boolean>(false);
+    // Add inside Panel component after existing state declarations
+    const [templates, setTemplates] = useState<Template[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     // Get token from URL
     const urlToken = getTokenFromUrl();
@@ -109,6 +157,26 @@ export const CustomSection = {
       }, '*');
     };
 
+    // Update CustomSection.tsx
+    useEffect(() => {
+      const fetchTemplates = async () => {
+        try {
+          setIsLoading(true);
+          const api = new TemplateApiService();
+          const response = await api.getTemplates();
+          setTemplates(response.payload);
+        } catch (err) {
+          console.error('Template fetch error:', err);
+          setError(`Failed to load templates: ${err.message}`);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+    
+      fetchTemplates();
+    }, []);
+
+    
     return (
       <div>
         {/* Tab Navigation */}
@@ -224,6 +292,43 @@ export const CustomSection = {
             >
               Send Data to Parent
             </Button>
+
+
+            {/* Add Templates Grid */}
+            <div style={{ height: 'calc(100vh - 200px)', overflow: 'auto' }}>
+              {isLoading && <div>Loading templates...</div>}
+              {error && (
+                <div style={{ color: 'red', padding: '10px' }}>
+                  {error}
+                </div>
+              )}
+              
+              <ImagesGrid
+                images={templates.map(template => ({
+                  id: template.uid,
+                  src: template.thumbnail_url,
+                  preview: template.thumbnail_url,
+                  name: template.name,
+                  description: template.description
+                }))}
+                getPreview={(item) => item.preview}
+                isLoading={isLoading}
+                onSelect={async (item) => {
+                  try {
+                    const api = new TemplateApiService();
+                    const templateDetail = await api.getTemplateById(item.id);
+                    if (templateDetail.content) {
+                      store.loadJSON(JSON.parse(templateDetail.content));
+                    }
+                  } catch (err) {
+                    console.error('Failed to load template:', err);
+                  }
+                }}
+                rowsNumber={2}
+              />
+            </div>
+
+
 
             </div>
           </div>

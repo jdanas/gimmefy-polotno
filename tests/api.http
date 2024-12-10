@@ -23,13 +23,14 @@ content-type: application/json
 Authorization: Bearer {{login.response.body.payload.accessToken}}
 
 {
-    "name": "Test Template",
-    "description": "Test description",
-    "content": "{}",
-    "type": "main-template"
+    "name": "Sample Template Derek 2",
+    "description": "A basic template with text and image",
+    "content": "{\"width\":800,\"height\":600,\"pages\":[{\"elements\":[{\"type\":\"text\",\"x\":100,\"y\":50,\"width\":400,\"height\":100,\"text\":\"Hello World\",\"fontSize\":32,\"fontFamily\":\"Arial\",\"fill\":\"#000000\"},{\"type\":\"image\",\"x\":100,\"y\":200,\"width\":300,\"height\":200,\"src\":\"https://picsum.photos/300/200\"},{\"type\":\"rectangle\",\"x\":500,\"y\":50,\"width\":200,\"height\":100,\"fill\":\"#f0f0f0\",\"stroke\":\"#000000\",\"strokeWidth\":2}]}]}",
+    "type": "main-template",
+    "category": "personal-templates"
 }
 
 ### Get Template by ID
-GET {{baseUrl}}/vividly/templates/ee175dbdd9226b9f5900a52b72abc3cc
+GET {{baseUrl}}/vividly/templates/1c3c29d357dda79147aa93215a3c4c38
 content-type: application/json
 Authorization: Bearer {{login.response.body.payload.accessToken}}
