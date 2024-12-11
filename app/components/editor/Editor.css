@@ -1,0 +1,15 @@
+/* go3977838046 polotno-side-panel-tab active */
+
+#vividly-app .polotno-side-panel-tab {
+    height: 60px !important;
+}
+
+/* adding class to active element */
+#vividly-app .polotno-side-panel-tab.active {
+    background-color: #e03826;
+    color: #fff;
+}
+
+#vividly-app .polotno-panel-container {
+    height: 100% !important;
+}

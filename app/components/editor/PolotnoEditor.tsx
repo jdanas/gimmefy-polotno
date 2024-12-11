@@ -18,6 +18,8 @@ import { createContext } from 'react';
 import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/popover2/lib/css/blueprint-popover2.css';
 
+import './Editor.css';
+
 export const CustomDataContext = createContext<{
   authKey: string;
   onPanelClick?: () => void;
@@ -71,7 +73,7 @@ const PolotnoEditor = ({ authKey = DUMMY_AUTH_KEY, onPanelClick }: PolotnoEditor
   ];
 
   return (
-    <div style={{ width: '100vw', height: '100vh' }}>
+    <div id="vividly-app" style={{ width: '100vw', height: '100vh' }}>
       <PolotnoContainer>
         <CustomDataContext.Provider value={{ authKey, onPanelClick }}>
           <SidePanelWrap>
