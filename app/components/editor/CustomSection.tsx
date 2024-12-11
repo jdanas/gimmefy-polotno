@@ -119,12 +119,16 @@ export const CustomSection = {
     const [templates, setTemplates] = useState<Template[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [personalTemplates, setPersonalTemplates] = useState<Template[]>([]);
+    const [gimmefyTemplates, setGimmefyTemplates] = useState<Template[]>([]);
+    const [isCreateTemplateOpen, setIsCreateTemplateOpen] = useState<boolean>(false);
 
     // Get token from URL
     const urlToken = getTokenFromUrl();
 
     const toggleLightbox = () => setIsLightboxOpen(!isLightboxOpen);
     const toggleGimmefyPopup = () => setIsGimmefyPopupOpen(!isGimmefyPopupOpen);
+    const toggleCreateTemplate = () => setIsCreateTemplateOpen(!isCreateTemplateOpen);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       if (event.target.files) {
@@ -164,7 +168,17 @@ export const CustomSection = {
           setIsLoading(true);
           const api = new TemplateApiService();
           const response = await api.getTemplates();
-          setTemplates(response.payload);
+          
+          // Separate templates by category
+          const personal = response.payload.filter(
+            (template: Template) => template.category === 'personal-templates'
+          );
+          const gimmefy = response.payload.filter(
+            (template: Template) => template.category === 'gimmefy-templates'
+          );
+          
+          setPersonalTemplates(personal);
+          setGimmefyTemplates(gimmefy);
         } catch (err) {
           console.error('Template fetch error:', err);
           setError(`Failed to load templates: ${err.message}`);
@@ -272,7 +286,7 @@ export const CustomSection = {
                 }
               }}
             >
-              <h3>Hello World</h3>
+              {/* <h3>Hello World</h3>
               <p>Auth Key: {authKey}</p>
               <Button
               icon="application"
@@ -291,7 +305,7 @@ export const CustomSection = {
               style={{ marginTop: '10px' }}
             >
               Send Data to Parent
-            </Button>
+            </Button> */}
 
 
             {/* Add Templates Grid */}
@@ -303,8 +317,65 @@ export const CustomSection = {
                 </div>
               )}
               
+              <h3 style={{ margin: '20px 0 10px' }}>My Personal Templates</h3>
+              <div 
+                style={{
+                  background: '#f5f5f5',
+                  padding: '20px',
+                  borderRadius: '8px',
+                  marginBottom: '20px',
+                  textAlign: 'center'
+                }}
+              >
+                <Button
+                  icon="plus"
+                  intent={Intent.PRIMARY}
+                  onClick={toggleCreateTemplate}
+                  style={{
+                    width: '200px',
+                    height: '200px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    margin: '0 auto',
+                    gap: '10px',
+                    borderRadius: '8px'
+                  }}
+                >
+                </Button>
+                <p style={{ marginTop: '10px', color: '#666' }}>
+                  Create or upload a custom template
+                </p>
+              </div>
+
               <ImagesGrid
-                images={templates.map(template => ({
+                images={personalTemplates.map(template => ({
+                  id: template.uid,
+                  src: template.thumbnail_url,
+                  preview: template.thumbnail_url,
+                  name: template.name,
+                  description: template.description
+                }))}
+                getPreview={(item) => item.preview}
+                isLoading={isLoading}
+                onSelect={async (item) => {
+                  try {
+                    const api = new TemplateApiService();
+                    const templateDetail = await api.getTemplateById(item.id);
+                    if (templateDetail.payload) {
+                      store.loadJSON(JSON.parse(templateDetail.payload.content));
+                    }
+                  } catch (err) {
+                    console.error('Failed to load template:', err);
+                  }
+                }}
+                rowsNumber={2}
+              />
+
+              <h3 style={{ margin: '20px 0 10px' }}>Gimmefy Templates</h3>
+              <ImagesGrid
+                images={gimmefyTemplates.map(template => ({
                   id: template.uid,
                   src: template.thumbnail_url,
                   preview: template.thumbnail_url,
@@ -456,6 +527,57 @@ export const CustomSection = {
         onClick={toggleGimmefyPopup}
       >
         Close Popup
+      </Button>
+    </div>
+  </Dialog>
+
+  <Dialog
+    isOpen={isCreateTemplateOpen}
+    onClose={toggleCreateTemplate}
+    title="Create New Template"
+    style={{ width: '600px' }}
+  >
+    <div className="bp3-dialog-body">
+      <div style={{ padding: '20px' }}>
+        <h4>Choose Template Type</h4>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: '1fr 1fr', 
+          gap: '20px',
+          marginTop: '20px'
+        }}>
+          <Button
+            icon="upload"
+            intent={Intent.PRIMARY}
+            style={{ height: '100px' }}
+            onClick={() => {
+              // Handle upload template logic
+              toggleCreateTemplate();
+            }}
+          >
+            Upload Template
+          </Button>
+          <Button
+            icon="build"
+            intent={Intent.SUCCESS}
+            style={{ height: '100px' }}
+            onClick={() => {
+              // Handle create from scratch logic
+              toggleCreateTemplate();
+            }}
+          >
+            Create from Scratch
+          </Button>
+        </div>
+      </div>
+    </div>
+    <div className="bp3-dialog-footer">
+      <Button
+        icon="cross"
+        intent={Intent.DANGER}
+        onClick={toggleCreateTemplate}
+      >
+        Cancel
       </Button>
     </div>
   </Dialog>

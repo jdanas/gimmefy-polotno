@@ -47,7 +47,7 @@ content-type: application/json
 Authorization: Bearer {{login.response.body.payload.accessToken}}
 
 {
-    "name": "Updated Sample Template",
+    "name": "Derek Template 2",
     "description": "Updated basic template with text and image",
     "content": "{\"width\":800,\"height\":600,\"pages\":[{\"id\":\"page1\",\"background\":\"white\",\"elements\":[{\"id\":\"text1\",\"type\":\"text\",\"x\":100,\"y\":50,\"width\":400,\"height\":100,\"text\":\"Hello World\",\"fontSize\":32,\"fontFamily\":\"Arial\",\"fill\":\"#000000\"},{\"id\":\"image1\",\"type\":\"image\",\"x\":100,\"y\":200,\"width\":300,\"height\":200,\"src\":\"https://picsum.photos/300/200\"},{\"id\":\"rect1\",\"type\":\"rectangle\",\"x\":500,\"y\":50,\"width\":200,\"height\":100,\"fill\":\"#f0f0f0\",\"stroke\":\"#000000\",\"strokeWidth\":2}]}]}",
     "type": "main-template"
