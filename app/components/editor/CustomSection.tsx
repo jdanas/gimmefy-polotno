@@ -308,8 +308,8 @@ export const CustomSection = {
             </Button> */}
 
 
-            {/* Add Templates Grid */}
-            <div style={{ height: 'calc(100vh - 200px)', overflow: 'auto' }}>
+            {/* Replace the templates container div */}
+            <div>
               {isLoading && <div>Loading templates...</div>}
               {error && (
                 <div style={{ color: 'red', padding: '10px' }}>
@@ -318,30 +318,12 @@ export const CustomSection = {
               )}
               
               <h3 style={{ margin: '20px 0 10px' }}>My Personal Templates</h3>
-              <div 
-                style={{
-                  background: '#f5f5f5',
-                  padding: '20px',
-                  borderRadius: '8px',
-                  marginBottom: '20px',
-                  textAlign: 'center'
-                }}
-              >
+              <div className='create-template-box'>
                 <Button
                   icon="plus"
                   intent={Intent.PRIMARY}
                   onClick={toggleCreateTemplate}
-                  style={{
-                    width: '100px',
-                    height: '100px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    margin: '0 auto',
-                    gap: '10px',
-                    borderRadius: '8px'
-                  }}
+                  className='create-template-button'
                 >
                 </Button>
                 <p style={{ marginTop: '10px', color: '#666' }}>
@@ -349,54 +331,58 @@ export const CustomSection = {
                 </p>
               </div>
 
-              <ImagesGrid
-                images={personalTemplates.map(template => ({
-                  id: template.uid,
-                  src: template.thumbnail_url,
-                  preview: template.thumbnail_url,
-                  name: template.name,
-                  description: template.description
-                }))}
-                getPreview={(item) => item.preview}
-                isLoading={isLoading}
-                onSelect={async (item) => {
-                  try {
-                    const api = new TemplateApiService();
-                    const templateDetail = await api.getTemplateById(item.id);
-                    if (templateDetail.payload) {
-                      store.loadJSON(JSON.parse(templateDetail.payload.content));
+              <div className='gimmefy-template'>
+                <ImagesGrid
+                  images={personalTemplates.map(template => ({
+                    id: template.uid,
+                    src: template.thumbnail_url,
+                    preview: template.thumbnail_url,
+                    name: template.name,
+                    description: template.description
+                  }))}
+                  getPreview={(item) => item.preview}
+                  isLoading={isLoading}
+                  onSelect={async (item) => {
+                    try {
+                      const api = new TemplateApiService();
+                      const templateDetail = await api.getTemplateById(item.id);
+                      if (templateDetail.payload) {
+                        store.loadJSON(JSON.parse(templateDetail.payload.content));
+                      }
+                    } catch (err) {
+                      console.error('Failed to load template:', err);
                     }
-                  } catch (err) {
-                    console.error('Failed to load template:', err);
-                  }
-                }}
-                rowsNumber={2}
-              />
+                  }}
+                  rowsNumber={2}
+                />
+              </div>
 
               <h3 style={{ margin: '20px 0 10px' }}>Gimmefy Templates</h3>
-              <ImagesGrid
-                images={gimmefyTemplates.map(template => ({
-                  id: template.uid,
-                  src: template.thumbnail_url,
-                  preview: template.thumbnail_url,
-                  name: template.name,
-                  description: template.description
-                }))}
-                getPreview={(item) => item.preview}
-                isLoading={isLoading}
-                onSelect={async (item) => {
-                  try {
-                    const api = new TemplateApiService();
-                    const templateDetail = await api.getTemplateById(item.id);
-                    if (templateDetail.payload) {
-                      store.loadJSON(JSON.parse(templateDetail.payload.content));
+              <div className='gimmefy-template'>
+                <ImagesGrid
+                  images={gimmefyTemplates.map(template => ({
+                    id: template.uid,
+                    src: template.thumbnail_url,
+                    preview: template.thumbnail_url,
+                    name: template.name,
+                    description: template.description
+                  }))}
+                  getPreview={(item) => item.preview}
+                  isLoading={isLoading}
+                  onSelect={async (item) => {
+                    try {
+                      const api = new TemplateApiService();
+                      const templateDetail = await api.getTemplateById(item.id);
+                      if (templateDetail.payload) {
+                        store.loadJSON(JSON.parse(templateDetail.payload.content));
+                      }
+                    } catch (err) {
+                      console.error('Failed to load template:', err);
                     }
-                  } catch (err) {
-                    console.error('Failed to load template:', err);
-                  }
-                }}
-                rowsNumber={2}
-              />
+                  }}
+                  rowsNumber={2}
+                />
+              </div>
             </div>
 
 
