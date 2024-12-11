@@ -332,8 +332,8 @@ export const CustomSection = {
                   intent={Intent.PRIMARY}
                   onClick={toggleCreateTemplate}
                   style={{
-                    width: '200px',
-                    height: '200px',
+                    width: '100px',
+                    height: '100px',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'center',
