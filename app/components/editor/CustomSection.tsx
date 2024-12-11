@@ -2,10 +2,9 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Section, SectionTab } from 'polotno/side-panel';
+import { SectionTab } from 'polotno/side-panel';
 import { observer } from 'mobx-react-lite';
 import { Icon, Button, Intent, Dialog } from '@blueprintjs/core';
-import type { StoreType } from 'polotno/model/store';
 import { CustomPalleteSection } from './CustomPalleteSection';
 import { CustomLogoSection } from './CustomLogoSection';
 import { CustomFontSection } from './CustomFontSection';
@@ -16,33 +15,6 @@ import { CustomDataContext } from './PolotnoEditor';
 import { TemplateApiService } from '../../services/templateApi';
 import { ImagesGrid } from 'polotno/side-panel/images-grid';
 
-// Interface definitions
-interface StoreType {
-  activePage?: {
-    addElement: (element: {
-      type: string;
-      src: string;
-      width: number;
-      height: number;
-      x: number;
-      y: number;
-    }) => Promise<void>;
-  };
-}
-
-interface PanelProps {
-  store: StoreType;
-}
-
-interface TabProps {
-  name: string;
-  [key: string]: any; // For additional props being spread
-}
-interface CustomSectionProps {
-  store: StoreType;
-  authKey: string;
-  onPanelClick?: () => void;
-}
 interface Tab {
   id: string;
   label: string;
@@ -194,30 +166,7 @@ export const CustomSection = {
     return (
       <div>
         {/* Tab Navigation */}
-        <div style={{ 
-          display: 'flex',
-          gap: '10px',
-          marginBottom: '20px',
-          borderBottom: '1px solid #ddd',
-          paddingBottom: '10px',
-          overflowX: 'auto',
-          scrollbarWidth: 'thin',
-          scrollbarColor: '#ccc transparent'
-        }}>
-          <style>
-            {`
-              ::-webkit-scrollbar {
-                height: 6px;
-              }
-              ::-webkit-scrollbar-thumb {
-                background-color: #ccc;
-                border-radius: 3px;
-              }
-              ::-webkit-scrollbar-track {
-                background: transparent;
-              }
-            `}
-          </style>
+        <div className='tab-navigation'>
           {tabs.map((tab) => (
             <button
               key={tab.id}
