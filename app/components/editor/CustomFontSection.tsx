@@ -7,8 +7,10 @@ import { observer } from 'mobx-react-lite';
 import { Icon, Button } from '@blueprintjs/core';
 
 interface Font {
-  id: string;
-  family: string;
+  uid: string;
+  display_name: string;
+  font_url: string;
+  category: string;
 }
 
 export const CustomFontSection = {
@@ -28,12 +30,17 @@ export const CustomFontSection = {
         try {
           setLoading(true);
           setError(null);
-          const response = await fetch('/api/fonts');
+          const response = await fetch(`/api/fonts`, {
+            headers: {
+              'content-type': 'application/json',
+              'Authorization': `Bearer ${process.env.NEXT_PUBLIC_API_TOKEN}`,
+            },
+          });
           if (!response.ok) {
             throw new Error('Failed to fetch fonts');
           }
           const data = await response.json();
-          setFonts(data);
+          setFonts(data.payload);
         } catch (error) {
           console.error('Error fetching fonts:', error);
           setError('Failed to load fonts');
@@ -52,17 +59,18 @@ export const CustomFontSection = {
         {fonts && fonts.length > 0 ? (
           <ul style={{ listStyleType: 'none', padding: 0 }}>
             {fonts.map((font) => (
-              <li key={font.id} style={{ marginBottom: '10px' }}>
+              <li key={font.uid} style={{ marginBottom: '10px' }}>
                 <Button
                   onClick={() => {
                     store.activePage.addElement({
                       type: 'text',
                       text: 'Sample Text',
-                      fontFamily: font.family,
+                      fontFamily: font.display_name,
+                      fontURL: font.font_url,
                     });
                   }}
                 >
-                  {font.family}
+                  {font.display_name}
                 </Button>
               </li>
             ))}

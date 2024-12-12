@@ -66,3 +66,13 @@ Authorization: Bearer {{login.response.body.payload.accessToken}}
 GET {{baseUrl}}/vividly/templates/9ab8669404e30b0cf87fa19d83602467
 content-type: application/json
 Authorization: Bearer {{login.response.body.payload.accessToken}}
+
+### Get All Palettes
+GET {{baseUrl}}/vividly/palettes
+content-type: application/json
+Authorization: Bearer {{login.response.body.payload.accessToken}}
+
+### Get Palettes by Brand Kit
+GET {{baseUrl}}/vividly/palettes?brand_kit_uid=xyz123
+content-type: application/json
+Authorization: Bearer {{login.response.body.payload.accessToken}}
