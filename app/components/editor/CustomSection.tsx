@@ -1,19 +1,19 @@
 // components/editor/CustomSection.tsx
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { SectionTab } from 'polotno/side-panel';
-import { observer } from 'mobx-react-lite';
-import { Icon, Button, Intent, Dialog } from '@blueprintjs/core';
-import { CustomPalleteSection } from './CustomPalleteSection';
-import { CustomLogoSection } from './CustomLogoSection';
-import { CustomFontSection } from './CustomFontSection';
-import { useContext } from 'react';
-import { CustomDataContext } from './PolotnoEditor';
+import React, { useState, useEffect } from "react";
+import { SectionTab } from "polotno/side-panel";
+import { observer } from "mobx-react-lite";
+import { Icon, Button, Intent, Dialog } from "@blueprintjs/core";
+import { CustomPalleteSection } from "./CustomPalleteSection";
+import { CustomLogoSection } from "./CustomLogoSection";
+import { CustomFontSection } from "./CustomFontSection";
+import { useContext } from "react";
+import { CustomDataContext } from "./PolotnoEditor";
 
 // Add these imports at the top
-import { TemplateApiService } from '../../services/templateApi';
-import { ImagesGrid } from 'polotno/side-panel/images-grid';
+import { TemplateApiService } from "../../services/templateApi";
+import { ImagesGrid } from "polotno/side-panel/images-grid";
 
 interface Tab {
   id: string;
@@ -43,39 +43,39 @@ interface ApiError {
 const dummyImages = [
   {
     id: 1,
-    url: 'https://picsum.photos/400/300',
-    title: 'Sample Image 1'
+    url: "https://picsum.photos/400/300",
+    title: "Sample Image 1",
   },
   {
-    id: 2, 
-    url: 'https://picsum.photos/400/301',
-    title: 'Sample Image 2'
+    id: 2,
+    url: "https://picsum.photos/400/301",
+    title: "Sample Image 2",
   },
   {
     id: 3,
-    url: 'https://picsum.photos/401/300',
-    title: 'Sample Image 3'
-  }
+    url: "https://picsum.photos/401/300",
+    title: "Sample Image 3",
+  },
 ];
 
 const tabs: Tab[] = [
-  { id: 'tab1', label: 'Upload Template', icon: 'upload' },
-  { id: 'tab2', label: 'Palletes', icon: 'tint' },
-  { id: 'tab3', label: 'Logos', icon: 'media' },
-  { id: 'tab4', label: 'Fonts', icon: 'font' },
+  { id: "tab1", label: "Upload Template", icon: "upload" },
+  { id: "tab2", label: "Palletes", icon: "tint" },
+  { id: "tab3", label: "Logos", icon: "media" },
+  { id: "tab4", label: "Fonts", icon: "font" },
 ];
 
 // Add function to get URL params
 const getTokenFromUrl = () => {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     const params = new URLSearchParams(window.location.search);
-    return params.get('token');
+    return params.get("token");
   }
   return null;
 };
 
 export const CustomSection = {
-  name: 'Design',
+  name: "Design",
   Tab: (props: any) => (
     <SectionTab name="POC1" {...props}>
       <Icon icon="cog" />
@@ -83,24 +83,27 @@ export const CustomSection = {
   ),
   Panel: observer(({ store }) => {
     const { authKey, onPanelClick } = useContext(CustomDataContext);
-    const [activeTab, setActiveTab] = useState<string>('tab1');
+    const [activeTab, setActiveTab] = useState<string>("tab1");
     const [file, setFile] = useState<File | null>(null);
     const [isLightboxOpen, setIsLightboxOpen] = useState<boolean>(false);
-    const [isGimmefyPopupOpen, setIsGimmefyPopupOpen] = useState<boolean>(false);
+    const [isGimmefyPopupOpen, setIsGimmefyPopupOpen] =
+      useState<boolean>(false);
     // Add inside Panel component after existing state declarations
     const [templates, setTemplates] = useState<Template[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [personalTemplates, setPersonalTemplates] = useState<Template[]>([]);
     const [gimmefyTemplates, setGimmefyTemplates] = useState<Template[]>([]);
-    const [isCreateTemplateOpen, setIsCreateTemplateOpen] = useState<boolean>(false);
+    const [isCreateTemplateOpen, setIsCreateTemplateOpen] =
+      useState<boolean>(false);
 
     // Get token from URL
     const urlToken = getTokenFromUrl();
 
     const toggleLightbox = () => setIsLightboxOpen(!isLightboxOpen);
     const toggleGimmefyPopup = () => setIsGimmefyPopupOpen(!isGimmefyPopupOpen);
-    const toggleCreateTemplate = () => setIsCreateTemplateOpen(!isCreateTemplateOpen);
+    const toggleCreateTemplate = () =>
+      setIsCreateTemplateOpen(!isCreateTemplateOpen);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       if (event.target.files) {
@@ -111,12 +114,12 @@ export const CustomSection = {
     const handleInsertImage = async (imageUrl: string) => {
       if (store.activePage) {
         await store.activePage.addElement({
-          type: 'image',
+          type: "image",
           src: imageUrl,
           width: 300,
           height: 200,
           x: 50,
-          y: 50
+          y: 50,
         });
         toggleLightbox();
       }
@@ -124,13 +127,16 @@ export const CustomSection = {
 
     const handleGimmefyClick = () => {
       // Notify parent window
-      window.parent.postMessage({
-        type: 'textToImage',
-        data: {
-          text: 'Hello World',
-          authKey: urlToken || 'default-token'
-        }
-      }, '*');
+      window.parent.postMessage(
+        {
+          type: "textToImage",
+          data: {
+            text: "Hello World",
+            authKey: urlToken || "default-token",
+          },
+        },
+        "*"
+      );
     };
 
     // Update CustomSection.tsx
@@ -140,48 +146,53 @@ export const CustomSection = {
           setIsLoading(true);
           const api = new TemplateApiService();
           const response = await api.getTemplates();
-          
+
           // Separate templates by category
           const personal = response.payload.filter(
-            (template: Template) => template.category === 'personal-templates'
+            (template: Template) => template.category === "personal-templates"
           );
           const gimmefy = response.payload.filter(
-            (template: Template) => template.category === 'gimmefy-templates'
+            (template: Template) => template.category === "gimmefy-templates"
           );
-          
+
           setPersonalTemplates(personal);
           setGimmefyTemplates(gimmefy);
         } catch (err) {
-          console.error('Template fetch error:', err);
+          console.error("Template fetch error:", err);
           setError(`Failed to load templates: ${err.message}`);
         } finally {
           setIsLoading(false);
         }
       };
-    
+
       fetchTemplates();
     }, []);
 
+    useEffect(() => {
+      if (!store.pages.length) {
+        store.addPage();
+      }
+    }, [store]);
 
     return (
       <div>
         {/* Tab Navigation */}
-        <div className='tab-navigation'>
+        <div className="tab-navigation">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               style={{
-                padding: '8px 16px',
-                background: activeTab === tab.id ? '#007bff' : 'transparent',
-                color: activeTab === tab.id ? 'white' : 'inherit',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '5px',
-                flexShrink: 0
+                padding: "8px 16px",
+                background: activeTab === tab.id ? "#007bff" : "transparent",
+                color: activeTab === tab.id ? "white" : "inherit",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "5px",
+                flexShrink: 0,
               }}
             >
               <Icon icon={tab.icon} />
@@ -191,13 +202,13 @@ export const CustomSection = {
         </div>
 
         {/* Tab Content */}
-        {activeTab === 'tab1' && (
+        {activeTab === "tab1" && (
           <div>
-            <input 
-              type="file" 
+            <input
+              type="file"
               onChange={handleFileChange}
               accept=".jpg,.jpeg,.png,.svg"
-              style={{ marginBottom: '10px' }}
+              style={{ marginBottom: "10px" }}
             />
             <Button
               icon="upload"
@@ -209,26 +220,26 @@ export const CustomSection = {
             >
               Upload Template
             </Button>
-            
+
             <Button
               icon="media"
               intent={Intent.SUCCESS}
               onClick={toggleLightbox}
-              style={{ marginLeft: '10px' }}
+              style={{ marginLeft: "10px" }}
             >
               Browse Images
             </Button>
-            <div 
+            <div
               style={{
-                padding: '15px',
-                margin: '10px 0',
-                backgroundColor: '#f5f5f5',
-                borderRadius: '4px',
-                border: '1px solid #ddd',
-                cursor: 'pointer' // Add cursor pointer
+                padding: "15px",
+                margin: "10px 0",
+                backgroundColor: "#f5f5f5",
+                borderRadius: "4px",
+                border: "1px solid #ddd",
+                cursor: "pointer", // Add cursor pointer
               }}
               onClick={() => {
-                console.log('click handler accepting callback');
+                console.log("click handler accepting callback");
                 // Call the callback if provided
                 if (onPanelClick) {
                   onPanelClick();
@@ -256,103 +267,125 @@ export const CustomSection = {
               Send Data to Parent
             </Button> */}
 
+              {/* Replace the templates container div */}
+              <div>
+                {isLoading && <div>Loading templates...</div>}
+                {error && (
+                  <div style={{ color: "red", padding: "10px" }}>{error}</div>
+                )}
 
-            {/* Replace the templates container div */}
-            <div>
-              {isLoading && <div>Loading templates...</div>}
-              {error && (
-                <div style={{ color: 'red', padding: '10px' }}>
-                  {error}
+                <h3 style={{ margin: "20px 0 10px" }}>My Personal Templates</h3>
+                <div className="create-template-box">
+                  <Button
+                    icon="plus"
+                    intent={Intent.PRIMARY}
+                    onClick={toggleCreateTemplate}
+                    className="create-template-button"
+                  ></Button>
+                  <p style={{ marginTop: "10px", color: "#666" }}>
+                    Create or upload a custom template
+                  </p>
                 </div>
-              )}
-              
-              <h3 style={{ margin: '20px 0 10px' }}>My Personal Templates</h3>
-              <div className='create-template-box'>
-                <Button
-                  icon="plus"
-                  intent={Intent.PRIMARY}
-                  onClick={toggleCreateTemplate}
-                  className='create-template-button'
-                >
-                </Button>
-                <p style={{ marginTop: '10px', color: '#666' }}>
-                  Create or upload a custom template
-                </p>
-              </div>
 
-              <div className='gimmefy-template'>
-                <ImagesGrid
-                  images={personalTemplates.map(template => ({
-                    id: template.uid,
-                    src: template.thumbnail_url,
-                    preview: template.thumbnail_url,
-                    name: template.name,
-                    description: template.description
-                  }))}
-                  getPreview={(item) => item.preview}
-                  isLoading={isLoading}
-                  onSelect={async (item) => {
-                    try {
-                      const api = new TemplateApiService();
-                      const templateDetail = await api.getTemplateById(item.id);
-                      if (templateDetail.payload) {
-                        store.loadJSON(JSON.parse(templateDetail.payload.content));
+                <div className="gimmefy-template">
+                  <ImagesGrid
+                    images={personalTemplates.map((template) => ({
+                      id: template.uid,
+                      src: template.thumbnail_url,
+                      preview: template.thumbnail_url,
+                      name: template.name,
+                      description: template.description,
+                    }))}
+                    getPreview={(item) => item.preview}
+                    isLoading={isLoading}
+                    onSelect={async (item) => {
+                      try {
+                        const api = new TemplateApiService();
+                        const templateDetail = await api.getTemplateById(
+                          item.id
+                        );
+                        console.log(
+                          "Template detail received:",
+                          templateDetail
+                        );
+
+                        if (templateDetail.payload?.content) {
+                          // Parse the stringified content
+                          const content = JSON.parse(
+                            templateDetail.payload.content
+                          );
+                          console.log("Parsed content:", content);
+
+                          // Load the JSON content
+                          await store.loadJSON(content);
+
+                          // Verify store state
+                          console.log(
+                            "Store state after load:",
+                            store.toJSON()
+                          );
+
+                          // Force update if needed
+                          store.activePage?.resize();
+                        } else {
+                          console.error("No content found in template");
+                        }
+                      } catch (err) {
+                        console.error("Failed to load template:", err);
                       }
-                    } catch (err) {
-                      console.error('Failed to load template:', err);
-                    }
-                  }}
-                  rowsNumber={2}
-                />
-              </div>
+                    }}
+                    rowsNumber={2}
+                  />
+                </div>
 
-              <h3 style={{ margin: '20px 0 10px' }}>Gimmefy Templates</h3>
-              <div className='gimmefy-template'>
-                <ImagesGrid
-                  images={gimmefyTemplates.map(template => ({
-                    id: template.uid,
-                    src: template.thumbnail_url,
-                    preview: template.thumbnail_url,
-                    name: template.name,
-                    description: template.description
-                  }))}
-                  getPreview={(item) => item.preview}
-                  isLoading={isLoading}
-                  onSelect={async (item) => {
-                    try {
-                      const api = new TemplateApiService();
-                      const templateDetail = await api.getTemplateById(item.id);
-                      if (templateDetail.payload) {
-                        store.loadJSON(JSON.parse(templateDetail.payload.content));
+                <h3 style={{ margin: "20px 0 10px" }}>Gimmefy Templates</h3>
+                <div className="gimmefy-template">
+                  <ImagesGrid
+                    images={gimmefyTemplates.map((template) => ({
+                      id: template.uid,
+                      src: template.thumbnail_url,
+                      preview: template.thumbnail_url,
+                      name: template.name,
+                      description: template.description,
+                    }))}
+                    getPreview={(item) => item.preview}
+                    isLoading={isLoading}
+                    onSelect={async (item) => {
+                      try {
+                        const api = new TemplateApiService();
+                        const templateDetail = await api.getTemplateById(
+                          item.id
+                        );
+                        if (templateDetail.payload) {
+                          store.loadJSON(
+                            JSON.parse(templateDetail.payload.content)
+                          );
+                        }
+                      } catch (err) {
+                        console.error("Failed to load template:", err);
                       }
-                    } catch (err) {
-                      console.error('Failed to load template:', err);
-                    }
-                  }}
-                  rowsNumber={2}
-                />
+                    }}
+                    rowsNumber={2}
+                  />
+                </div>
               </div>
-            </div>
-
-
-
             </div>
           </div>
         )}
-        
-        {activeTab === 'tab2' && (
+
+        {activeTab === "tab2" && (
           <div>
             <CustomPalleteSection.Panel store={store} />
           </div>
         )}
-        
-        {activeTab === 'tab3' && (
+
+        {activeTab === "tab3" && (
           <div>
             <CustomLogoSection.Panel store={store} />
           </div>
         )}
 
-        {activeTab === 'tab4' && (
+        {activeTab === "tab4" && (
           <div>
             <CustomFontSection.Panel store={store} />
           </div>
@@ -363,24 +396,26 @@ export const CustomSection = {
           isOpen={isLightboxOpen}
           onClose={toggleLightbox}
           title="Image Gallery"
-          style={{ width: '800px' }}
+          style={{ width: "800px" }}
         >
           <div className="bp3-dialog-body">
-            <div style={{ 
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '20px',
-              padding: '20px'
-            }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "20px",
+                padding: "20px",
+              }}
+            >
               {dummyImages.map((image) => (
-                <div key={image.id} style={{ textAlign: 'center' }}>
-                  <img 
-                    src={image.url} 
+                <div key={image.id} style={{ textAlign: "center" }}>
+                  <img
+                    src={image.url}
                     alt={image.title}
-                    style={{ 
-                      width: '100%',
-                      borderRadius: '8px',
-                      marginBottom: '10px'
+                    style={{
+                      width: "100%",
+                      borderRadius: "8px",
+                      marginBottom: "10px",
                     }}
                   />
                   <Button
@@ -405,123 +440,121 @@ export const CustomSection = {
           </div>
         </Dialog>
 
-
         {/* Add Gimmefy Popup Dialog */}
         <Dialog
-  isOpen={isGimmefyPopupOpen}
-  onClose={toggleGimmefyPopup}
-  title="Gimmefy Popup"
-  style={{ width: '500px' }}
->
-  <div className="bp3-dialog-body">
-    <div 
-      style={{
-        padding: '15px',
-        backgroundColor: '#f5f5f5',
-        borderRadius: '4px',
-        border: '1px solid #ddd',
-        marginBottom: '20px'
-      }}
-    >
-      <h3>Hello World</h3>
-      <p>Auth Key: {authKey}</p>
-      <Button
-        icon="add"
-        intent={Intent.SUCCESS}
-        onClick={() => {
-          // Add Hello World text
-          store.activePage?.addElement({
-            type: 'text',
-            x: 50,
-            y: 50,
-            text: 'Hello World',
-            fontSize: 24
-          });
-          
-          // Add Auth Key text below
-          store.activePage?.addElement({
-            type: 'text',
-            x: 50,
-            y: 100,
-            text: `Auth Key: ${authKey}`,
-            fontSize: 16
-          });
-          
-          // Close popup after insertion
-          toggleGimmefyPopup();
-        }}
-      >
-        Insert to Canvas
-      </Button>
-    </div>
-  </div>
-    <div className="bp3-dialog-footer">
-      <Button
-        icon="cross"
-        intent={Intent.DANGER}
-        onClick={toggleGimmefyPopup}
-      >
-        Close Popup
-      </Button>
-    </div>
-  </Dialog>
+          isOpen={isGimmefyPopupOpen}
+          onClose={toggleGimmefyPopup}
+          title="Gimmefy Popup"
+          style={{ width: "500px" }}
+        >
+          <div className="bp3-dialog-body">
+            <div
+              style={{
+                padding: "15px",
+                backgroundColor: "#f5f5f5",
+                borderRadius: "4px",
+                border: "1px solid #ddd",
+                marginBottom: "20px",
+              }}
+            >
+              <h3>Hello World</h3>
+              <p>Auth Key: {authKey}</p>
+              <Button
+                icon="add"
+                intent={Intent.SUCCESS}
+                onClick={() => {
+                  // Add Hello World text
+                  store.activePage?.addElement({
+                    type: "text",
+                    x: 50,
+                    y: 50,
+                    text: "Hello World",
+                    fontSize: 24,
+                  });
 
-  <Dialog
-    isOpen={isCreateTemplateOpen}
-    onClose={toggleCreateTemplate}
-    title="Create New Template"
-    style={{ width: '600px' }}
-  >
-    <div className="bp3-dialog-body">
-      <div style={{ padding: '20px' }}>
-        <h4>Choose Template Type</h4>
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: '1fr 1fr', 
-          gap: '20px',
-          marginTop: '20px'
-        }}>
-          <Button
-            icon="upload"
-            intent={Intent.PRIMARY}
-            style={{ height: '100px' }}
-            onClick={() => {
-              // Handle upload template logic
-              toggleCreateTemplate();
-            }}
-          >
-            Upload Template
-          </Button>
-          <Button
-            icon="build"
-            intent={Intent.SUCCESS}
-            style={{ height: '100px' }}
-            onClick={() => {
-              // Handle create from scratch logic
-              toggleCreateTemplate();
-            }}
-          >
-            Create from Scratch
-          </Button>
-        </div>
-      </div>
-    </div>
-    <div className="bp3-dialog-footer">
-      <Button
-        icon="cross"
-        intent={Intent.DANGER}
-        onClick={toggleCreateTemplate}
-      >
-        Cancel
-      </Button>
-    </div>
-  </Dialog>
+                  // Add Auth Key text below
+                  store.activePage?.addElement({
+                    type: "text",
+                    x: 50,
+                    y: 100,
+                    text: `Auth Key: ${authKey}`,
+                    fontSize: 16,
+                  });
 
+                  // Close popup after insertion
+                  toggleGimmefyPopup();
+                }}
+              >
+                Insert to Canvas
+              </Button>
+            </div>
+          </div>
+          <div className="bp3-dialog-footer">
+            <Button
+              icon="cross"
+              intent={Intent.DANGER}
+              onClick={toggleGimmefyPopup}
+            >
+              Close Popup
+            </Button>
+          </div>
+        </Dialog>
 
-
+        <Dialog
+          isOpen={isCreateTemplateOpen}
+          onClose={toggleCreateTemplate}
+          title="Create New Template"
+          style={{ width: "600px" }}
+        >
+          <div className="bp3-dialog-body">
+            <div style={{ padding: "20px" }}>
+              <h4>Choose Template Type</h4>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "20px",
+                  marginTop: "20px",
+                }}
+              >
+                <Button
+                  icon="upload"
+                  intent={Intent.PRIMARY}
+                  style={{ height: "100px" }}
+                  onClick={() => {
+                    // Handle upload template logic
+                    toggleCreateTemplate();
+                  }}
+                >
+                  Upload Template
+                </Button>
+                <Button
+                  icon="build"
+                  intent={Intent.SUCCESS}
+                  style={{ height: "100px" }}
+                  onClick={() => {
+                    // Handle create from scratch logic
+                    toggleCreateTemplate();
+                  }}
+                >
+                  Create from Scratch
+                </Button>
+              </div>
+            </div>
+          </div>
+          <div className="bp3-dialog-footer">
+            <Button
+              icon="cross"
+              intent={Intent.DANGER}
+              onClick={toggleCreateTemplate}
+            >
+              Cancel
+            </Button>
+          </div>
+        </Dialog>
       </div>
     );
-  })
+  }),
 };
 
 export default CustomSection;
