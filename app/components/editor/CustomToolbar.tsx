@@ -66,6 +66,7 @@ const CustomToolbar = ({ store, onTemplateSaved }: CustomToolbarProps) => {
           alignItems: 'center',
           gap: '5px',
           opacity: isSaving ? 0.7 : 1,
+          width: '180px',
         }}
       >
         <svg 
