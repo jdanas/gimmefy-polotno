@@ -220,7 +220,7 @@ export const CustomSection = {
             >
               Upload Template
             </Button>
-
+{/* 
             <Button
               icon="media"
               intent={Intent.SUCCESS}
@@ -228,6 +228,19 @@ export const CustomSection = {
               style={{ marginLeft: "10px" }}
             >
               Browse Images
+            </Button> */}
+
+            <Button
+              icon="refresh"
+              intent={Intent.WARNING}
+              onClick={() => {
+                // Clear all pages and add a fresh one
+                store.deletePages([store.activePage.id]);  
+                store.addPage();
+              }}
+              style={{ marginLeft: "10px" }}
+            >
+              Reset Canvas
             </Button>
             <div
               style={{
