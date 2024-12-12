@@ -5,32 +5,40 @@ import React, { useEffect, useState } from 'react';
 import { SectionTab } from 'polotno/side-panel';
 import { observer } from 'mobx-react-lite';
 import { Icon, Button } from '@blueprintjs/core';
-import { DEFAULT_SECTIONS } from 'polotno/side-panel';
-import type { StoreType } from 'polotno/model/store';
 
-// Find the default text section that includes font handling
-const TextSection = DEFAULT_SECTIONS.find(
-  (section) => section.name === 'text'
-);
+interface Font {
+  id: string;
+  family: string;
+}
 
 export const CustomFontSection = {
   name: 'fonts',
   Tab: observer(({ store }) => (
-    <SectionTab name="fonts" title="Fonts">
+    <SectionTab name="fonts" title="Custom Fonts">
       <Icon icon="font" />
     </SectionTab>
   )),
   Panel: observer(({ store }) => {
-    const [fonts, setFonts] = useState([]);
+    const [fonts, setFonts] = useState<Font[]>([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
       const fetchFonts = async () => {
         try {
+          setLoading(true);
+          setError(null);
           const response = await fetch('/api/fonts');
+          if (!response.ok) {
+            throw new Error('Failed to fetch fonts');
+          }
           const data = await response.json();
-          setFonts(data.fonts);
+          setFonts(data);
         } catch (error) {
           console.error('Error fetching fonts:', error);
+          setError('Failed to load fonts');
+        } finally {
+          setLoading(false);
         }
       };
 
@@ -39,26 +47,29 @@ export const CustomFontSection = {
 
     return (
       <div style={{ padding: '10px' }}>
-        <ul style={{ listStyleType: 'none', padding: 0 }}>
-          {fonts.map((font) => (
-            <li key={font.id} style={{ marginBottom: '10px' }}>
-              <Button
-                onClick={() => {
-                  store.activePage.addElement({
-                    type: 'text',
-                    text: 'Sample Text',
-                    fontFamily: font.family,
-                  });
-                }}
-                style={{ width: '100%', textAlign: 'left' }}
-              >
-                <div style={{ fontFamily: font.family }}>
-                  {font.name}
-                </div>
-              </Button>
-            </li>
-          ))}
-        </ul>
+        {loading && <p>Loading fonts...</p>}
+        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {fonts && fonts.length > 0 ? (
+          <ul style={{ listStyleType: 'none', padding: 0 }}>
+            {fonts.map((font) => (
+              <li key={font.id} style={{ marginBottom: '10px' }}>
+                <Button
+                  onClick={() => {
+                    store.activePage.addElement({
+                      type: 'text',
+                      text: 'Sample Text',
+                      fontFamily: font.family,
+                    });
+                  }}
+                >
+                  {font.family}
+                </Button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          !loading && <p>No fonts available</p>
+        )}
       </div>
     );
   }),
