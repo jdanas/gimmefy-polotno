@@ -324,9 +324,6 @@ export const CustomSection = {
                             "Store state after load:",
                             store.toJSON()
                           );
-
-                          // Force update if needed
-                          store.activePage?.resize();
                         } else {
                           console.error("No content found in template");
                         }
