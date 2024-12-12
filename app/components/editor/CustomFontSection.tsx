@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { SectionTab } from 'polotno/side-panel';
 import { observer } from 'mobx-react-lite';
 import { Icon, Button } from '@blueprintjs/core';
+import FontAPI from '../../services/fontApi';
 
 interface Font {
   uid: string;
@@ -15,7 +16,7 @@ interface Font {
 
 export const CustomFontSection = {
   name: 'fonts',
-  Tab: observer(({ store }) => (
+  Tab: observer(({}) => (
     <SectionTab name="fonts" title="Custom Fonts">
       <Icon icon="font" />
     </SectionTab>
@@ -26,21 +27,14 @@ export const CustomFontSection = {
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+      const fontApi = new FontAPI();
+      
       const fetchFonts = async () => {
         try {
           setLoading(true);
           setError(null);
-          const response = await fetch(`/api/fonts`, {
-            headers: {
-              'content-type': 'application/json',
-              'Authorization': `Bearer ${process.env.NEXT_PUBLIC_API_TOKEN}`,
-            },
-          });
-          if (!response.ok) {
-            throw new Error('Failed to fetch fonts');
-          }
-          const data = await response.json();
-          setFonts(data.payload);
+          const fonts = await fontApi.getAllFonts();
+          setFonts(fonts);
         } catch (error) {
           console.error('Error fetching fonts:', error);
           setError('Failed to load fonts');
