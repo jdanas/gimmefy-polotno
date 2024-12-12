@@ -5,9 +5,10 @@ import { useState } from 'react';
 
 interface CustomToolbarProps {
   store: Store;
+  onTemplateSaved?: () => void;  // Add this prop
 }
 
-const CustomToolbar = ({ store }: CustomToolbarProps) => {
+const CustomToolbar = ({ store, onTemplateSaved }: CustomToolbarProps) => {
   const [isSaving, setIsSaving] = useState(false);
 
   const saveTemplate = async () => {
@@ -28,6 +29,14 @@ const CustomToolbar = ({ store }: CustomToolbarProps) => {
       });
 
       alert('Template saved successfully!');
+      
+      // Trigger reload after successful save
+      if (onTemplateSaved) {
+        onTemplateSaved();
+      }
+      // Alternatively, you can force a page reload
+      window.location.reload();
+      
     } catch (error) {
       console.error('Error saving template:', error);
       // Log more detailed error information

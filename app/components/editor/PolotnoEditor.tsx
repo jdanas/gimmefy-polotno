@@ -66,6 +66,14 @@ const PolotnoEditor = ({ authKey = DUMMY_AUTH_KEY, onPanelClick }: PolotnoEditor
     ...filteredDefaultSections
   ];
 
+  const handleTemplateSaved = () => {
+    // You could either reload the page
+    window.location.reload();
+    
+    // Or just refresh the templates list if you have that functionality
+    // refreshTemplates();
+  };
+
   return (
     <div id="vividly-app" style={{ width: '100vw', height: '100vh' }}>
       <PolotnoContainer>
@@ -74,7 +82,10 @@ const PolotnoEditor = ({ authKey = DUMMY_AUTH_KEY, onPanelClick }: PolotnoEditor
             <SidePanel store={store.current} sections={sections} />
           </SidePanelWrap>
           <WorkspaceWrap>
-            <CustomToolbar store={store.current} />
+            <CustomToolbar 
+              store={store.current} 
+              onTemplateSaved={handleTemplateSaved}
+            />
             <Workspace store={store.current} />
             <ZoomButtons store={store.current} />
             <PagesTimeline store={store.current} />
