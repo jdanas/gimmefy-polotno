@@ -114,5 +114,33 @@ export class TemplateApiService {
     }
   }
 
+  async createTemplate(data: {
+    name: string;
+    description: string;
+    content: string;
+    type: string;
+    base64Image: string;
+  }) {
+    if (!this.token) {
+      await this.login('shalu.wasu@teemuno.com', 'P12345678');
+    }
 
+    try {
+      const response = await fetch(`${this.baseUrl}/vividly/templates`, {
+        method: 'POST',
+        headers: this.headers, // Use the class headers which include the auth token
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to create template: ${response.status} - ${errorText}`);
+      }
+
+      return response.json();
+    } catch (err) {
+      console.error('Template creation failed:', err);
+      throw err;
+    }
+  }
 }
