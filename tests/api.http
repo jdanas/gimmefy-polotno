@@ -76,3 +76,14 @@ Authorization: Bearer {{login.response.body.payload.accessToken}}
 GET {{baseUrl}}/vividly/palettes?brand_kit_uid=xyz123
 content-type: application/json
 Authorization: Bearer {{login.response.body.payload.accessToken}}
+
+
+### Get All Fonts
+GET {{baseUrl}}/vividly/fonts
+content-type: application/json
+Authorization: Bearer {{login.response.body.payload.accessToken}}
+
+### Get Fonts by Brand Kit
+GET {{baseUrl}}/vividly/fonts?brand_kit_uid=xyz123
+content-type: application/json
+Authorization: Bearer {{login.response.body.payload.accessToken}}
