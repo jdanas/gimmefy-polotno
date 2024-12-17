@@ -6,6 +6,7 @@ import { SectionTab } from 'polotno/side-panel';
 import { observer } from 'mobx-react-lite';
 import { Icon, Button } from '@blueprintjs/core';
 import FontAPI from '../../services/fontApi';
+import { registerFont } from 'polotno/utils/font';
 
 interface Font {
   uid: string;
@@ -14,28 +15,24 @@ interface Font {
   category: string;
 }
 
-const loadFont = async (fontFamily: string, fontURL: string) => {
+// Add font loading with store management
+const loadFont = async (store, font) => {
   try {
-    // Check if font is already loaded
-    if (document.fonts.check(`12px "${fontFamily}"`)) {
-      return true;
-    }
-
-    console.log(`Loading font: ${fontFamily} from ${fontURL}`);
-    const font = new FontFace(fontFamily, `url(${fontURL})`, {
-      style: 'normal',
-      weight: '400',
+    const { display_name, font_url } = font;
+    
+    // Add font to store
+    store.addFont({
+      fontFamily: display_name,
+      url: font_url,
     });
 
-    const loadedFont = await font.load();
-    document.fonts.add(loadedFont);
+    // Prepare font for use
+    await store.loadFont(display_name);
     
-    // Wait for the font to be fully loaded
-    await document.fonts.ready;
-    console.log(`Font loaded successfully: ${fontFamily}`);
+    console.log(`Font loaded in store: ${display_name}`);
     return true;
   } catch (error) {
-    console.error(`Error loading font ${fontFamily}:`, error);
+    console.error(`Error loading font ${font.display_name}:`, error);
     return false;
   }
 };
@@ -54,42 +51,28 @@ export const CustomFontSection = {
     const [loadedFonts, setLoadedFonts] = useState<Set<string>>(new Set());
 
     useEffect(() => {
-      const fontApi = new FontAPI();
-      
       const fetchAndLoadFonts = async () => {
+        setLoading(true);
         try {
-          setLoading(true);
-          setError(null);
-          const fonts = await fontApi.getAllFonts();
+          const api = new FontAPI();
+          const response = await api.getAllFonts();
+          setFonts(response);
           
-          // Preload all fonts
+          // Load all fonts into store
           await Promise.all(
-            fonts.map(async (font) => {
-              const success = await loadFont(font.display_name, font.font_url);
-              if (success) {
-                setLoadedFonts(prev => new Set(prev).add(font.display_name));
-              }
-            })
+            response.map(font => loadFont(store, font))
           );
-          
-          setFonts(fonts);
         } catch (error) {
           console.error('Error fetching fonts:', error);
           setError('Failed to load fonts');
-        } finally {
-          setLoading(false);
         }
+        setLoading(false);
       };
 
       fetchAndLoadFonts();
-    }, []);
+    }, [store]);
 
     const handleAddText = (font: Font) => {
-      if (!loadedFonts.has(font.display_name)) {
-        console.warn(`Font ${font.display_name} not loaded yet`);
-        return;
-      }
-
       const element = {
         type: 'text',
         text: 'Sample Text',
@@ -101,8 +84,7 @@ export const CustomFontSection = {
         align: 'center',
       };
 
-      console.log('Adding text element:', element);
-      store.activePage.addElement(element);
+      store.activePage?.addElement(element);
     };
 
     return (
