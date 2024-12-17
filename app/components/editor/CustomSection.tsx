@@ -59,7 +59,7 @@ const dummyImages = [
 ];
 
 const tabs: Tab[] = [
-  { id: "tab1", label: "Upload Template", icon: "upload" },
+  { id: "tab1", label: "Templates", icon: "upload" },
   { id: "tab2", label: "Palletes", icon: "tint" },
   { id: "tab3", label: "Logos", icon: "media" },
   { id: "tab4", label: "Fonts", icon: "font" },
