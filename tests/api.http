@@ -84,6 +84,6 @@ content-type: application/json
 Authorization: Bearer {{login.response.body.payload.accessToken}}
 
 ### Get Fonts by Brand Kit
-GET {{baseUrl}}/vividly/fonts?brand_kit_uid=xyz123
+GET {{baseUrl}}/vividly/fonts?brand_kit_uid=dcbc4dc93084796db6fc5c6ea8de28c5
 content-type: application/json
 Authorization: Bearer {{login.response.body.payload.accessToken}}
