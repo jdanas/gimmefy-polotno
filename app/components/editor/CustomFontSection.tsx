@@ -17,7 +17,7 @@ interface Font {
 }
 
 // Add font loading with store management
-const loadFont = async (store, font) => {
+const loadFont = async (store, font, setLoadedFonts) => {
   try {
     if (!font || !font.display_name || !font.file_url) {
       throw new Error('Invalid font data');
@@ -51,6 +51,9 @@ const loadFont = async (store, font) => {
     );
 
     await Promise.race([fontLoadPromise, timeoutPromise]);
+    
+    // Add to loaded fonts set
+    setLoadedFonts(prev => new Set([...prev, cleanFontFamily]));
     return cleanFontFamily;
   } catch (error) {
     console.error(`Font loading error for ${font?.display_name}:`, error);
@@ -81,7 +84,7 @@ export const CustomFontSection = {
           
           // Load all fonts into store
           await Promise.all(
-            response.map(font => loadFont(store, font))
+            response.map(font => loadFont(store, font, setLoadedFonts))
           );
         } catch (error) {
           console.error('Error fetching fonts:', error);
@@ -97,7 +100,7 @@ export const CustomFontSection = {
       const element = {
         type: 'text',
         text: 'Sample Text',
-        fontFamily: font.display_name,
+        fontFamily: font.display_name.replace(/\.ttf$|\.otf$/i, "").trim(),
         fontSize: 40,
         width: 300,
         x: store.width / 2,
@@ -117,12 +120,13 @@ export const CustomFontSection = {
             {fonts.map((font) => (
               <li key={font.uid} style={{ marginBottom: '10px' }}>
                 <Button
-                  disabled={!loadedFonts.has(font.display_name)}
+                  disabled={!loadedFonts.has(font.display_name.replace(/\.ttf$|\.otf$/i, "").trim())}
                   onClick={() => handleAddText(font)}
                 >
                   <span style={{ 
-                    fontFamily: loadedFonts.has(font.display_name) ? font.display_name : 'inherit',
-                    opacity: loadedFonts.has(font.display_name) ? 1 : 0.5
+                    fontFamily: loadedFonts.has(font.display_name.replace(/\.ttf$|\.otf$/i, "").trim()) 
+                      ? font.display_name.replace(/\.ttf$|\.otf$/i, "").trim() 
+                      : 'inherit'
                   }}>
                     {font.display_name}
                   </span>
