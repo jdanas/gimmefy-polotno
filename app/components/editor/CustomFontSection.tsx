@@ -6,7 +6,6 @@ import { SectionTab } from 'polotno/side-panel';
 import { observer } from 'mobx-react-lite';
 import { Icon, Button } from '@blueprintjs/core';
 import FontAPI from '../../services/fontApi';
-import { registerFont } from 'polotno/utils/font';
 
 interface Font {
   uid: string;
