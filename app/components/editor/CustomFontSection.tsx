@@ -14,6 +14,32 @@ interface Font {
   category: string;
 }
 
+const loadFont = async (fontFamily: string, fontURL: string) => {
+  try {
+    // Check if font is already loaded
+    if (document.fonts.check(`12px "${fontFamily}"`)) {
+      return true;
+    }
+
+    console.log(`Loading font: ${fontFamily} from ${fontURL}`);
+    const font = new FontFace(fontFamily, `url(${fontURL})`, {
+      style: 'normal',
+      weight: '400',
+    });
+
+    const loadedFont = await font.load();
+    document.fonts.add(loadedFont);
+    
+    // Wait for the font to be fully loaded
+    await document.fonts.ready;
+    console.log(`Font loaded successfully: ${fontFamily}`);
+    return true;
+  } catch (error) {
+    console.error(`Error loading font ${fontFamily}:`, error);
+    return false;
+  }
+};
+
 export const CustomFontSection = {
   name: 'fonts',
   Tab: observer(({}) => (
@@ -25,15 +51,27 @@ export const CustomFontSection = {
     const [fonts, setFonts] = useState<Font[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [loadedFonts, setLoadedFonts] = useState<Set<string>>(new Set());
 
     useEffect(() => {
       const fontApi = new FontAPI();
       
-      const fetchFonts = async () => {
+      const fetchAndLoadFonts = async () => {
         try {
           setLoading(true);
           setError(null);
           const fonts = await fontApi.getAllFonts();
+          
+          // Preload all fonts
+          await Promise.all(
+            fonts.map(async (font) => {
+              const success = await loadFont(font.display_name, font.font_url);
+              if (success) {
+                setLoadedFonts(prev => new Set(prev).add(font.display_name));
+              }
+            })
+          );
+          
           setFonts(fonts);
         } catch (error) {
           console.error('Error fetching fonts:', error);
@@ -43,8 +81,29 @@ export const CustomFontSection = {
         }
       };
 
-      fetchFonts();
+      fetchAndLoadFonts();
     }, []);
+
+    const handleAddText = (font: Font) => {
+      if (!loadedFonts.has(font.display_name)) {
+        console.warn(`Font ${font.display_name} not loaded yet`);
+        return;
+      }
+
+      const element = {
+        type: 'text',
+        text: 'Sample Text',
+        fontFamily: font.display_name,
+        fontSize: 40,
+        width: 300,
+        x: store.width / 2,
+        y: store.height / 2,
+        align: 'center',
+      };
+
+      console.log('Adding text element:', element);
+      store.activePage.addElement(element);
+    };
 
     return (
       <div style={{ padding: '10px' }}>
@@ -55,16 +114,15 @@ export const CustomFontSection = {
             {fonts.map((font) => (
               <li key={font.uid} style={{ marginBottom: '10px' }}>
                 <Button
-                  onClick={() => {
-                    store.activePage.addElement({
-                      type: 'text',
-                      text: 'Sample Text',
-                      fontFamily: font.display_name,
-                      fontURL: font.font_url,
-                    });
-                  }}
+                  disabled={!loadedFonts.has(font.display_name)}
+                  onClick={() => handleAddText(font)}
                 >
-                  {font.display_name}
+                  <span style={{ 
+                    fontFamily: loadedFonts.has(font.display_name) ? font.display_name : 'inherit',
+                    opacity: loadedFonts.has(font.display_name) ? 1 : 0.5
+                  }}>
+                    {font.display_name}
+                  </span>
                 </Button>
               </li>
             ))}
