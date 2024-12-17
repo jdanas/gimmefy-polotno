@@ -8,6 +8,12 @@ interface LogoResponse {
   payload: Logo[];
 }
 
+interface LogoParams {
+  brand_kit_uid: string;
+  initial_size?: string;
+  project_uid?: string;
+}
+
 export class LogoAPI {
   private baseUrl: string;
   private token: string | null;
@@ -46,13 +52,15 @@ export class LogoAPI {
     }
   }
 
-  async getAllLogos(brandKitUid?: string) {
+  async getAllLogos(params: LogoParams): Promise<LogoResponse> {
     try {
-      const url = brandKitUid 
-        ? `${this.baseUrl}/logos?brand_kit_uid=${brandKitUid}`
-        : `${this.baseUrl}/logos`;
+      const queryParams = new URLSearchParams({
+        brand_kit_uid: params.brand_kit_uid,
+        ...(params.initial_size && { initial_size: params.initial_size }),
+        ...(params.project_uid && { project_uid: params.project_uid })
+      });
 
-      const response = await fetch(url, {
+      const response = await fetch(`${this.baseUrl}/vividly/logos?${queryParams}`, {
         headers: this.headers,
       });
 
@@ -60,10 +68,10 @@ export class LogoAPI {
         throw new Error('Failed to fetch logos');
       }
 
-      return await response.json() as LogoResponse;
-    } catch (err) {
-      console.error('Error fetching logos:', err);
-      throw err;
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching logos:', error);
+      throw error;
     }
   }
 
