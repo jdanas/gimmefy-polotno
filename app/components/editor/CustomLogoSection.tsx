@@ -50,36 +50,33 @@ const LogoPanel = observer(({ store }) => {
   };
 
   return (
-    <div style={{ padding: '10px' }}>
-      {loading && <p>Loading logos...</p>}
-      <div className="logo-grid">
+    <div style={{ padding: '20px' }}>
+      <FileInput
+        text="Choose logo file..."
+        onInputChange={handleFileUpload}
+        disabled={loading}
+      />
+      <div style={{ marginTop: '20px' }}>
         {logos.map((logo) => (
-          <div key={logo.uid || logo.display_name} className="logo-item">
-            <img 
-              src={logo.logo_url} 
+          <div
+            key={logo.logo_url}
+            onClick={async () => {
+              const element = await store.activePage?.addElement({
+                type: 'image',
+                src: logo.logo_url,
+              });
+            }}
+            style={{ cursor: 'pointer', marginBottom: '10px' }}
+          >
+            <img
+              src={logo.logo_url}
               alt={logo.display_name}
-              onClick={() => {
-                store.activePage?.addElement({
-                  type: 'image',
-                  src: logo.logo_url,
-                });
-              }}
-              style={{
-                width: '100px',
-                height: '100px',
-                objectFit: 'contain',
-                cursor: 'pointer'
-              }}
+              style={{ maxWidth: '100px', height: 'auto' }}
             />
             <p>{logo.display_name}</p>
           </div>
         ))}
       </div>
-      <FileInput 
-        text="Upload Logo" 
-        onChange={handleFileUpload}
-        disabled={loading}
-      />
     </div>
   );
 });
