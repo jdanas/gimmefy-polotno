@@ -1,7 +1,7 @@
 // PolotnoEditor.tsx
 "use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { PolotnoContainer, SidePanelWrap, WorkspaceWrap } from 'polotno';
 import { Toolbar } from 'polotno/toolbar/toolbar';
 import { PagesTimeline } from 'polotno/pages-timeline';
@@ -14,6 +14,7 @@ import type { Section } from 'polotno/side-panel';
 import { CustomSection } from './CustomSection';
 import { createContext } from 'react';
 import CustomToolbar from './CustomToolbar';
+import { BrandKitContext } from '../../context/BrandKitContext';
 
 import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/popover2/lib/css/blueprint-popover2.css';
@@ -37,6 +38,8 @@ const PolotnoEditor = ({ authKey = DUMMY_AUTH_KEY, onPanelClick }: PolotnoEditor
     showCredit: true
   }));
 
+  const [config, setConfig] = useState({ brand_kit_uid: '' });
+
   useEffect(() => {
     if (store.current.pages.length === 0) {
       store.current.addPage();
@@ -47,6 +50,9 @@ const PolotnoEditor = ({ authKey = DUMMY_AUTH_KEY, onPanelClick }: PolotnoEditor
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === 'textToImage') {
         window.parent.postMessage({ type: 'textToImage', data: {} }, '*');
+      }
+      if (event.data?.brand_kit_uid) {
+        setConfig({ brand_kit_uid: event.data.brand_kit_uid });
       }
     };
 
@@ -78,18 +84,20 @@ const PolotnoEditor = ({ authKey = DUMMY_AUTH_KEY, onPanelClick }: PolotnoEditor
     <div id="vividly-app" style={{ width: '100vw', height: '100vh' }}>
       <PolotnoContainer>
         <CustomDataContext.Provider value={{ authKey, onPanelClick }}>
-          <SidePanelWrap>
-            <SidePanel store={store.current} sections={sections} />
-          </SidePanelWrap>
-          <WorkspaceWrap>
-            <CustomToolbar 
-              store={store.current} 
-              onTemplateSaved={handleTemplateSaved}
-            />
-            <Workspace store={store.current} />
-            <ZoomButtons store={store.current} />
-            <PagesTimeline store={store.current} />
-          </WorkspaceWrap>
+          <BrandKitContext.Provider value={config}>
+            <SidePanelWrap>
+              <SidePanel store={store.current} sections={sections} />
+            </SidePanelWrap>
+            <WorkspaceWrap>
+              <CustomToolbar 
+                store={store.current} 
+                onTemplateSaved={handleTemplateSaved}
+              />
+              <Workspace store={store.current} />
+              <ZoomButtons store={store.current} />
+              <PagesTimeline store={store.current} />
+            </WorkspaceWrap>
+          </BrandKitContext.Provider>
         </CustomDataContext.Provider>
       </PolotnoContainer>
     </div>

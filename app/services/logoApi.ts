@@ -52,12 +52,10 @@ export class LogoAPI {
     }
   }
 
-  async getAllLogos(params: LogoParams): Promise<LogoResponse> {
+  async getAllLogos(params: { brand_kit_uid: string }): Promise<LogoResponse> {
     try {
       const queryParams = new URLSearchParams({
-        brand_kit_uid: params.brand_kit_uid,
-        ...(params.initial_size && { initial_size: params.initial_size }),
-        ...(params.project_uid && { project_uid: params.project_uid })
+        brand_kit_uid: params.brand_kit_uid
       });
 
       const response = await fetch(`${this.baseUrl}/vividly/logos?${queryParams}`, {

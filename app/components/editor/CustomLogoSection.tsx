@@ -1,22 +1,24 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { SectionTab } from 'polotno/side-panel';
 import { observer } from 'mobx-react-lite';
 import { Icon, Button, FileInput } from '@blueprintjs/core';
 import { LogoAPI } from '../../services/logoApi';
+import { BrandKitContext } from '../../context/BrandKitContext';
 
 const LogoPanel = observer(({ store }) => {
   const [logos, setLogos] = useState<Array<{ display_name: string; logo_url: string }>>([]);
   const [loading, setLoading] = useState(false);
   const logoApi = new LogoAPI();
+  const { brand_kit_uid } = useContext(BrandKitContext);
 
   useEffect(() => {
     const fetchLogos = async () => {
       try {
         await logoApi.login('shalu.wasu@teemuno.com', 'P12345678'); // Replace with actual credentials
         const response = await logoApi.getAllLogos({
-          brand_kit_uid: '586b9ff042c8f6f5565d22ac583373b5', // Replace with actual value
+          brand_kit_uid,
           initial_size: '', // Optional
           project_uid: '' // Optional
         });
@@ -26,8 +28,10 @@ const LogoPanel = observer(({ store }) => {
       }
     };
 
-    fetchLogos();
-  }, []);
+    if (brand_kit_uid) {
+      fetchLogos();
+    }
+  }, [brand_kit_uid]);
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
