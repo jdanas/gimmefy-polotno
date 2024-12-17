@@ -9,19 +9,21 @@ import FontAPI from '../../services/fontApi';
 
 interface Font {
   uid: string;
+  file_name: string;
   display_name: string;
-  font_url: string;
+  organisation_id: number;
   category: string;
+  file_url: string;  // This is what we need for font loading
 }
 
 // Add font loading with store management
 const loadFont = async (store, font) => {
   try {
-    if (!font || !font.display_name || !font.font_url) {
+    if (!font || !font.display_name || !font.file_url) {
       throw new Error('Invalid font data');
     }
 
-    const { display_name, font_url } = font;
+    const { display_name, file_url } = font;
     
     // Clean font family name
     const cleanFontFamily = display_name
@@ -29,17 +31,17 @@ const loadFont = async (store, font) => {
       .replace(/[^a-zA-Z0-9\s-]/g, "") // Remove special characters
       .trim();
     
-    console.log(`Loading font: ${cleanFontFamily} from ${font_url}`);
+    console.log(`Loading font: ${cleanFontFamily} from ${file_url}`);
 
     // Validate font URL with proper null check
-    if (typeof font_url !== 'string' || !font_url.match(/^https?:\/\//)) {
-      throw new Error(`Invalid font URL: ${font_url}`);
+    if (typeof file_url !== 'string' || !file_url.match(/^https?:\/\//)) {
+      throw new Error(`Invalid font URL: ${file_url}`);
     }
 
-    // Register font with store
+    // Register font with store using file_url instead of font_url
     store.addFont({
       fontFamily: cleanFontFamily,
-      url: font_url,
+      url: file_url,
     });
 
     // Load font with timeout
