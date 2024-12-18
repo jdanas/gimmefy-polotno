@@ -8,7 +8,7 @@ import { LogoAPI } from '../../services/logoApi';
 import { BrandKitContext } from '../../context/BrandKitContext';
 
 const LogoPanel = observer(({ store }) => {
-  const [logos, setLogos] = useState<Array<{ display_name: string; logo_url: string }>>([]);
+  const [logos, setLogos] = useState<Array<{ display_name: string; file_url: string }>>([]);
   const [loading, setLoading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const logoApi = new LogoAPI();
@@ -116,17 +116,17 @@ const LogoPanel = observer(({ store }) => {
       <div style={{ marginTop: '20px' }}>
         {logos.map((logo) => (
           <div
-            key={logo.logo_url}
+            key={logo.file_url}
             onClick={async () => {
               const element = await store.activePage?.addElement({
                 type: 'image',
-                src: logo.logo_url,
+                src: logo.file_url,
               });
             }}
             style={{ cursor: 'pointer', marginBottom: '10px' }}
           >
             <img
-              src={logo.logo_url}
+              src={logo.file_url}
               alt={logo.display_name}
               style={{ maxWidth: '100px', height: 'auto' }}
             />
