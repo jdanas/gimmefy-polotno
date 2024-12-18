@@ -75,9 +75,16 @@ export class LogoAPI {
 
   async getSignedUploadUrl(fileName: string, brandKitUid: string) {
     try {
-      const url = `${this.baseUrl}/signed-url?action=WRITE&asset_type=BRAND_KIT_LOGO&file_name=${fileName}&source=BRAND_KIT&source_id=${brandKitUid}`;
-      
-      const response = await fetch(url, {
+      const queryParams = new URLSearchParams({
+        action: 'WRITE',
+        asset_type: 'BRAND_KIT_LOGO',
+        file_name: fileName,
+        source: 'BRAND_KIT',
+        source_id: brandKitUid
+      }).toString();
+
+      const response = await fetch(`${this.baseUrl}/signed-url?${queryParams}`, {
+        method: 'GET',
         headers: this.headers,
       });
 
@@ -85,9 +92,43 @@ export class LogoAPI {
         throw new Error('Failed to get signed URL');
       }
 
-      return await response.json();
+      const data = await response.json();
+      return data;
     } catch (err) {
       console.error('Error getting signed URL:', err);
+      throw err;
+    }
+  }
+
+  async uploadLogoToS3(file: File, brandKitUid: string) {
+    try {
+      // Get signed URL
+      const signedUrlResponse = await this.getSignedUploadUrl(file.name, brandKitUid);
+      const { url: signedUrl } = signedUrlResponse.payload;
+
+      // Upload to S3
+      const uploadResponse = await fetch(signedUrl, {
+        method: 'PUT',
+        body: file,
+        headers: {
+          'Content-Type': file.type,
+        },
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error('Failed to upload file to S3');
+      }
+
+      // Get the permanent URL by removing the query parameters
+      const permanentUrl = signedUrl.split('?')[0];
+
+      // Return both URLs
+      return {
+        fileUrl: permanentUrl,
+        signedUrl
+      };
+    } catch (err) {
+      console.error('Error uploading logo:', err);
       throw err;
     }
   }

@@ -52,17 +52,17 @@ const LogoPanel = observer(({ store }) => {
 
     setLoading(true);
     try {
-      const signedUrlResponse = await logoApi.getSignedUploadUrl(file.name, 'your-brand-kit-uid');
+      const { fileUrl } = await logoApi.uploadLogoToS3(file, brand_kit_uid);
       const element = await store.activePage?.addElement({
         type: 'image',
-        src: signedUrlResponse.payload.url,
+        src: fileUrl,
       });
     } catch (error) {
       console.error('Upload failed:', error);
     } finally {
       setLoading(false);
     }
-  }, [store.activePage, logoApi]);
+  }, [store.activePage, logoApi, brand_kit_uid]);
 
   const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -70,17 +70,17 @@ const LogoPanel = observer(({ store }) => {
 
     setLoading(true);
     try {
-      const signedUrlResponse = await logoApi.getSignedUploadUrl(file.name, 'your-brand-kit-uid');
+      const { fileUrl } = await logoApi.uploadLogoToS3(file, brand_kit_uid);
       const element = await store.activePage?.addElement({
         type: 'image',
-        src: signedUrlResponse.payload.url,
+        src: fileUrl,
       });
     } catch (error) {
       console.error('Upload failed:', error);
     } finally {
       setLoading(false);
     }
-  }, [store.activePage, logoApi]);
+  }, [store.activePage, logoApi, brand_kit_uid]);
 
   return (
     <div style={{ padding: '20px' }}>
