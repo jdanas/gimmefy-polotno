@@ -101,6 +101,18 @@ content-type: application/json
 Authorization: Bearer {{login.response.body.payload.accessToken}}
 
 
+### Post logos by Brand Kit
+POST {{baseUrl}}/vividly/logos
+content-type: application/json
+Authorization: Bearer {{login.response.body.payload.accessToken}}
+
+{
+    "brand_kit_uid": "586b9ff042c8f6f5565d22ac583373b5",
+    "name": "Logo 1",
+    "src": "https://picsum.photos/200/300"
+}
+
+
 ### Get Palettes by Brand Kit
 GET {{baseUrl}}/vividly/palettes?brand_kit_uid=586b9ff042c8f6f5565d22ac583373b5
 content-type: application/json
