@@ -14,6 +14,8 @@ const LogoPanel = observer(({ store }) => {
   const { brand_kit_uid } = useContext(BrandKitContext);
 
   useEffect(() => {
+    console.log('Current brand_kit_uid:', brand_kit_uid); // Debug log
+
     const fetchLogos = async () => {
       try {
         await logoApi.login('shalu.wasu@teemuno.com', 'P12345678'); // Replace with actual credentials

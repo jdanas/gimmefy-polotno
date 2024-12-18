@@ -89,6 +89,16 @@ function createVividlyEditor(config) {
   
     iframe.src = src;
   
+    iframe.onload = () => {
+      setTimeout(() => {
+        console.log('Sending brand_kit_uid:', config.brand_kit_uid);
+        iframe.contentWindow.postMessage({
+          type: 'INIT',
+          brand_kit_uid: config.brand_kit_uid
+        }, '*');
+      }, 100);
+    };
+  
     // Pass initial data to iframe
     if (config.initialData) {
       iframe.addEventListener('load', () => {

@@ -38,7 +38,9 @@ const PolotnoEditor = ({ authKey = DUMMY_AUTH_KEY, onPanelClick }: PolotnoEditor
     showCredit: true
   }));
 
-  const [config, setConfig] = useState({ brand_kit_uid: '' });
+  const [brandKitConfig, setBrandKitConfig] = useState<BrandKitConfig>({
+    brand_kit_uid: ''
+  });
 
   useEffect(() => {
     if (store.current.pages.length === 0) {
@@ -48,11 +50,12 @@ const PolotnoEditor = ({ authKey = DUMMY_AUTH_KEY, onPanelClick }: PolotnoEditor
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      if (event.data?.type === 'textToImage') {
-        window.parent.postMessage({ type: 'textToImage', data: {} }, '*');
-      }
+      console.log('Received message in editor:', event.data);
       if (event.data?.brand_kit_uid) {
-        setConfig({ brand_kit_uid: event.data.brand_kit_uid });
+        setBrandKitConfig(prevConfig => ({
+          ...prevConfig,
+          brand_kit_uid: event.data.brand_kit_uid
+        }));
       }
     };
 
@@ -81,10 +84,10 @@ const PolotnoEditor = ({ authKey = DUMMY_AUTH_KEY, onPanelClick }: PolotnoEditor
   };
 
   return (
-    <div id="vividly-app" style={{ width: '100vw', height: '100vh' }}>
-      <PolotnoContainer>
-        <CustomDataContext.Provider value={{ authKey, onPanelClick }}>
-          <BrandKitContext.Provider value={config}>
+    <BrandKitContext.Provider value={brandKitConfig}>
+      <div id="vividly-app" style={{ width: '100vw', height: '100vh' }}>
+        <PolotnoContainer>
+          <CustomDataContext.Provider value={{ authKey, onPanelClick }}>
             <SidePanelWrap>
               <SidePanel store={store.current} sections={sections} />
             </SidePanelWrap>
@@ -97,10 +100,10 @@ const PolotnoEditor = ({ authKey = DUMMY_AUTH_KEY, onPanelClick }: PolotnoEditor
               <ZoomButtons store={store.current} />
               <PagesTimeline store={store.current} />
             </WorkspaceWrap>
-          </BrandKitContext.Provider>
-        </CustomDataContext.Provider>
-      </PolotnoContainer>
-    </div>
+          </CustomDataContext.Provider>
+        </PolotnoContainer>
+      </div>
+    </BrandKitContext.Provider>
   );
 };
 
