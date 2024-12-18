@@ -19,8 +19,6 @@ const LogoPanel = observer(({ store }) => {
         await logoApi.login('shalu.wasu@teemuno.com', 'P12345678'); // Replace with actual credentials
         const response = await logoApi.getAllLogos({
           brand_kit_uid,
-          initial_size: '', // Optional
-          project_uid: '' // Optional
         });
         setLogos(response.payload);
       } catch (error) {
