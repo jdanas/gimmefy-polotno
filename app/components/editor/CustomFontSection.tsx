@@ -113,26 +113,47 @@ export const CustomFontSection = {
 
     return (
       <div style={{ padding: '10px' }}>
+        <h2 style={{ 
+          margin: '0 0 20px 0',
+          fontSize: '18px',
+          fontWeight: 600,
+          color: '#394B59'
+        }}>
+          Your Fonts
+        </h2>
         {loading && <p>Loading fonts...</p>}
         {error && <p style={{ color: 'red' }}>{error}</p>}
         {fonts && fonts.length > 0 ? (
           <ul style={{ listStyleType: 'none', padding: 0 }}>
-            {fonts.map((font) => (
-              <li key={font.uid} style={{ marginBottom: '10px' }}>
-                <Button
-                  disabled={!loadedFonts.has(font.display_name.replace(/\.ttf$|\.otf$/i, "").trim())}
-                  onClick={() => handleAddText(font)}
-                >
-                  <span style={{ 
-                    fontFamily: loadedFonts.has(font.display_name.replace(/\.ttf$|\.otf$/i, "").trim()) 
-                      ? font.display_name.replace(/\.ttf$|\.otf$/i, "").trim() 
-                      : 'inherit'
-                  }}>
-                    {font.display_name}
-                  </span>
-                </Button>
-              </li>
-            ))}
+            {fonts.map((font) => {
+              const isLoaded = loadedFonts.has(font.display_name.replace(/\.ttf$|\.otf$/i, "").trim());
+              return (
+                <li key={font.uid} style={{ marginBottom: '10px' }}>
+                  <div
+                    onClick={() => isLoaded && handleAddText(font)}
+                    style={{
+                      cursor: isLoaded ? 'pointer' : 'default',
+                      opacity: isLoaded ? 1 : 0.5,
+                      fontSize: '16px',
+                      padding: '8px',
+                      transition: 'all 0.2s ease',
+                      ':hover': {
+                        color: isLoaded ? '#106ba3' : 'inherit',
+                        transform: isLoaded ? 'scale(1.02)' : 'none'
+                      }
+                    }}
+                  >
+                    <span style={{ 
+                      fontFamily: isLoaded 
+                        ? font.display_name.replace(/\.ttf$|\.otf$/i, "").trim() 
+                        : 'inherit'
+                    }}>
+                      {font.display_name}
+                    </span>
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         ) : (
           !loading && <p>No fonts available</p>
