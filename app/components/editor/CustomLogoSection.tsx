@@ -44,43 +44,53 @@ const LogoPanel = observer(({ store }) => {
     setIsDragging(false);
   }, []);
 
+  const handleUploadLogo = async (file: File) => {
+    try {
+      setLoading(true);
+      
+      // Ensure we're logged in first
+      await logoApi.login('shalu.wasu@teemuno.com', 'P12345678');
+      
+      // Validate file before upload
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        throw new Error('File size too large. Maximum size is 5MB.');
+      }
+
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+      if (!allowedTypes.includes(file.type)) {
+        throw new Error('Invalid file type. Please upload a JPG, PNG, or GIF.');
+      }
+      
+      const { fileUrl } = await logoApi.uploadLogoToS3(file, brand_kit_uid);
+  
+      // Add the uploaded image to the canvas
+      await store.activePage?.addElement({
+        type: 'image',
+        src: fileUrl,
+      });
+  
+    } catch (error) {
+      console.error('Upload failed:', error);
+      // TODO: Add proper error notification to user
+      alert(error instanceof Error ? error.message : 'Failed to upload image');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    await handleUploadLogo(file);
+  }, [store.activePage, brand_kit_uid]);
+  
   const handleDrop = useCallback(async (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
     const file = e.dataTransfer.files[0];
     if (!file) return;
-
-    setLoading(true);
-    try {
-      const { fileUrl } = await logoApi.uploadLogoToS3(file, brand_kit_uid);
-      const element = await store.activePage?.addElement({
-        type: 'image',
-        src: fileUrl,
-      });
-    } catch (error) {
-      console.error('Upload failed:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [store.activePage, logoApi, brand_kit_uid]);
-
-  const handleFileSelect = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setLoading(true);
-    try {
-      const { fileUrl } = await logoApi.uploadLogoToS3(file, brand_kit_uid);
-      const element = await store.activePage?.addElement({
-        type: 'image',
-        src: fileUrl,
-      });
-    } catch (error) {
-      console.error('Upload failed:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [store.activePage, logoApi, brand_kit_uid]);
+    await handleUploadLogo(file);
+  }, [store.activePage, brand_kit_uid]);
 
   return (
     <div style={{ padding: '20px' }}>

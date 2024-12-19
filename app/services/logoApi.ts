@@ -75,6 +75,10 @@ export class LogoAPI {
 
   async getSignedUploadUrl(fileName: string, brandKitUid: string) {
     try {
+      if (!this.token) {
+        throw new Error('Not authenticated. Please login first.');
+      }
+
       const queryParams = new URLSearchParams({
         action: 'WRITE',
         asset_type: 'BRAND_KIT_LOGO',
@@ -83,16 +87,21 @@ export class LogoAPI {
         source_id: brandKitUid
       }).toString();
 
-      const response = await fetch(`${this.baseUrl}/signed-url?${queryParams}`, {
+      const response = await fetch(`${this.baseUrl}/vividly/signed-url?${queryParams}`, {
         method: 'GET',
         headers: this.headers,
       });
 
       if (!response.ok) {
-        throw new Error('Failed to get signed URL');
+        const errorText = await response.text();
+        throw new Error(`Failed to get signed URL (${response.status}): ${errorText}`);
       }
 
       const data = await response.json();
+      if (!data.payload?.url) {
+        throw new Error('Invalid response format: missing URL in payload');
+      }
+
       return data;
     } catch (err) {
       console.error('Error getting signed URL:', err);
@@ -102,8 +111,21 @@ export class LogoAPI {
 
   async uploadLogoToS3(file: File, brandKitUid: string) {
     try {
+      if (!this.token) {
+        throw new Error('Not authenticated. Please login first.');
+      }
+
+      // Generate a unique filename with safe characters
+      const safeFileName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const uniqueFileName = `${Date.now()}-${safeFileName}`;
+      
       // Get signed URL
-      const signedUrlResponse = await this.getSignedUploadUrl(file.name, brandKitUid);
+      const signedUrlResponse = await this.getSignedUploadUrl(uniqueFileName, brandKitUid);
+      
+      if (!signedUrlResponse?.payload?.url) {
+        throw new Error('Invalid signed URL response');
+      }
+
       const { url: signedUrl } = signedUrlResponse.payload;
 
       // Upload to S3
@@ -112,18 +134,20 @@ export class LogoAPI {
         body: file,
         headers: {
           'Content-Type': file.type,
+          'x-amz-acl': 'public-read', // Ensure the uploaded file is publicly readable
         },
       });
 
       if (!uploadResponse.ok) {
-        throw new Error('Failed to upload file to S3');
+        const errorText = await uploadResponse.text();
+        throw new Error(`Failed to upload file to S3 (${uploadResponse.status}): ${errorText}`);
       }
 
       // Get the permanent URL by removing the query parameters
       const permanentUrl = signedUrl.split('?')[0];
 
-      // Return both URLs
       return {
+        fileName: uniqueFileName,
         fileUrl: permanentUrl,
         signedUrl
       };
